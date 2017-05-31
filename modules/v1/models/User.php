@@ -72,7 +72,7 @@ class User extends \yii\db\ActiveRecord
         return $this->hasMany(EmpresaUser::className(), ['usu_id' => 'id']);
     }
 
-    public function getEmps()
+    public function getEmpresas()
     {
         return $this->hasMany(Empresa::className(), ['emp_id' => 'emp_id'])->viaTable('empresa_user', ['usu_id' => 'id']);
     }
@@ -82,12 +82,12 @@ class User extends \yii\db\ActiveRecord
         return $this->hasMany(EmpresaUserDispositivo::className(), ['usu_id' => 'id']);
     }
 
-    public function getDis()
+    public function getDispositivo()
     {
         return $this->hasMany(Dispositivo::className(), ['dis_id' => 'dis_id'])->viaTable('empresa_user_dispositivo', ['usu_id' => 'id']);
     }
 
-    public function getUserAuthentications()
+    public function getUserAuthentication()
     {
         return $this->hasMany(UserAuthentication::className(), ['user_id' => 'id']);
     }

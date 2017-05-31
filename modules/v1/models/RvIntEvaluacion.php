@@ -47,7 +47,7 @@ class RvIntEvaluacion extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getEva()
+    public function getEvaluacion()
     {
         return $this->hasOne(RvEvaluacion::className(), ['eva_id' => 'eva_id']);
     }

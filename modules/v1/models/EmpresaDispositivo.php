@@ -38,17 +38,17 @@ class EmpresaDispositivo extends \yii\db\ActiveRecord
     {
         return [
             'emd_id' => 'Emd ID',
-            'dis_id' => 'Dis ID',
-            'emu_id' => 'Emu ID',
+            'dis_id' => 'Dispositivo',
+            'emu_id' => 'Usuario',
         ];
     }
 
-    public function getDis()
+    public function getDispositivo()
     {
         return $this->hasOne(Dispositivo::className(), ['dis_id' => 'dis_id']);
     }
 
-    public function getEmu()
+    public function getUsuario()
     {
         return $this->hasOne(EmpresaUsuario::className(), ['emu_id' => 'emu_id']);
     }

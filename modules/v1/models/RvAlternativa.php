@@ -51,7 +51,7 @@ class RvAlternativa extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getPre()
+    public function getPregunta()
     {
         return $this->hasOne(RvPregunta::className(), ['pre_id' => 'pre_id']);
     }
@@ -61,7 +61,7 @@ class RvAlternativa extends \yii\db\ActiveRecord
         return $this->hasMany(RvIntAlternativa::className(), ['alt_id' => 'alt_id']);
     }
 
-    public function getRvRespuestas()
+    public function getRespuestas()
     {
         return $this->hasMany(RvRespuesta::className(), ['alt_id' => 'alt_id']);
     }

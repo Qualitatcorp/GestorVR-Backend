@@ -44,12 +44,12 @@ class RvTipo extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRvEvaluacions()
+    public function getRvEvaluacion()
     {
         return $this->hasMany(RvEvaluacion::className(), ['tev_id' => 'tev_id']);
     }
 
-    public function getRvIntTipos()
+    public function getRvIntTipo()
     {
         return $this->hasMany(RvIntTipo::className(), ['tev_id' => 'tev_id']);
     }

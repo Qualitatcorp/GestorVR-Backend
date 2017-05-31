@@ -47,7 +47,7 @@ class RvIntTipo extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getTev()
+    public function getTipo()
     {
         return $this->hasOne(RvTipo::className(), ['tev_id' => 'tev_id']);
     }

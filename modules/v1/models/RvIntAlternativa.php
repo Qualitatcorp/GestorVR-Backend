@@ -45,7 +45,7 @@ class RvIntAlternativa extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getAlt()
+    public function getAlternativa()
     {
         return $this->hasOne(RvAlternativa::className(), ['alt_id' => 'alt_id']);
     }

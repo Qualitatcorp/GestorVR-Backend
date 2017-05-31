@@ -72,7 +72,7 @@ class Trabajador extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRvFichas()
+    public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['trab_id' => 'tra_id']);
     }

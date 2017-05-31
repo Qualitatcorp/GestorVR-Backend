@@ -52,12 +52,12 @@ class LicenciaRegistro extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getLic()
+    public function getLicencia()
     {
         return $this->hasOne(Licencia::className(), ['lic_id' => 'lic_id']);
     }
 
-    public function getIduser0()
+    public function getUsuario()
     {
         return $this->hasOne(UsuarioUser::className(), ['iduser' => 'iduser']);
     }

@@ -43,7 +43,7 @@ class UserClient extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getUserAuthentications()
+    public function getAuthentications()
     {
         return $this->hasMany(UserAuthentication::className(), ['client_id' => 'id']);
     }

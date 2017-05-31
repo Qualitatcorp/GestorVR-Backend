@@ -62,32 +62,32 @@ class Dispositivo extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getEmp()
+    public function getEmpresa()
     {
         return $this->hasOne(Empresa::className(), ['emp_id' => 'emp_id']);
     }
 
-    public function getDit()
+    public function getTipo()
     {
         return $this->hasOne(DispositivoTipo::className(), ['dit_id' => 'dit_id']);
     }
 
-    public function getEmpresaDispositivos()
+    public function getEmpDisp()
     {
         return $this->hasMany(EmpresaDispositivo::className(), ['dis_id' => 'dis_id']);
     }
 
-    public function getEmpresaUserDispositivos()
+    public function getUserDisp()
     {
         return $this->hasMany(EmpresaUserDispositivo::className(), ['dis_id' => 'dis_id']);
     }
 
-    public function getUsus()
+    public function getUsuarios()
     {
         return $this->hasMany(User::className(), ['id' => 'usu_id'])->viaTable('empresa_user_dispositivo', ['dis_id' => 'dis_id']);
     }
 
-    public function getRvFichas()
+    public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['disp_id' => 'dis_id']);
     }

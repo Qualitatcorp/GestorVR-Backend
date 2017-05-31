@@ -71,7 +71,7 @@ class Empresa extends \yii\db\ActiveRecord
         return $this->hasMany(Dispositivo::className(), ['emp_id' => 'emp_id']);
     }
 
-    public function getCom()
+    public function getComuna()
     {
         return $this->hasOne(Comuna::className(), ['com_id' => 'com_id']);
     }
@@ -81,7 +81,7 @@ class Empresa extends \yii\db\ActiveRecord
         return $this->hasMany(EmpresaUser::className(), ['emp_id' => 'emp_id']);
     }
 
-    public function getUsus()
+    public function getUsuarios()
     {
         return $this->hasMany(User::className(), ['id' => 'usu_id'])->viaTable('empresa_user', ['emp_id' => 'emp_id']);
     }

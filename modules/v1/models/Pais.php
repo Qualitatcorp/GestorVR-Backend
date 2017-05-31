@@ -43,7 +43,7 @@ class Pais extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRvFichas()
+    public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['pais_id' => 'pais_id']);
     }

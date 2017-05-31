@@ -54,22 +54,22 @@ class RvEvaluacion extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getTev()
+    public function getTipo()
     {
         return $this->hasOne(RvTipo::className(), ['tev_id' => 'tev_id']);
     }
 
-    public function getRvFichas()
+    public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['eva_id' => 'eva_id']);
     }
 
-    public function getRvIntEvaluacions()
+    public function getIntEvaluacions()
     {
         return $this->hasMany(RvIntEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
 
-    public function getRvPreguntas()
+    public function getPreguntas()
     {
         return $this->hasMany(RvPregunta::className(), ['eva_id' => 'eva_id']);
     }

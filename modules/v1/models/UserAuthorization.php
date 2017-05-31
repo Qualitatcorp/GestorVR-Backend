@@ -43,7 +43,7 @@ class UserAuthorization extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRes()
+    public function getResouce()
     {
         return $this->hasOne(UserResource::className(), ['id' => 'res_id']);
     }
