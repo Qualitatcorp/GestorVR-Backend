@@ -23,6 +23,8 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => false,
+            'enableSession' => false,
+            'loginUrl' =>'',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -51,7 +53,34 @@ $config = [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
-                        'v1/test'
+                        'v1/comuna',
+                        'v1/dispositivo',
+                        'v1/dispositivotipo',
+                        'v1/empresa',
+                        'v1/empresadispositivo',
+                        'v1/empresauser',
+                        'v1/licencia',
+                        'v1/licenciaregistro',
+                        'v1/licenciatipo',
+                        'v1/pais',
+                        'v1/rvalternativa',
+                        'v1/rvevaluacion',
+                        'v1/rvficha',
+                        'v1/rvitem',
+                        'v1/rvpregunta',
+                        'v1/rvproyecto',
+                        'v1/rvrespuesta',
+                        'v1/trabajador',
+                        'v1/user',
+                        'v1/userauthentication',
+                        'v1/userauthorization',
+                        'v1/userclient',
+                        'v1/userresource',
+                        'v1/userresourcechildren',
+                        'v1/rvintalternativa',
+                        'v1/rvintevaluacion',
+                        'v1/rvintpregunta',
+                        'v1/rvinttipo'
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search'
