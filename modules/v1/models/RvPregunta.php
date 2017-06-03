@@ -24,12 +24,10 @@ use Yii;
  */
 class RvPregunta extends \yii\db\ActiveRecord
 {
-
     public static function tableName()
     {
         return 'rv_pregunta';
     }
-
 
     public function rules()
     {
@@ -42,7 +40,6 @@ class RvPregunta extends \yii\db\ActiveRecord
             [['ite_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvItem::className(), 'targetAttribute' => ['ite_id' => 'ite_id']],
         ];
     }
-
 
     public function attributeLabels()
     {
@@ -59,22 +56,22 @@ class RvPregunta extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRvAlternativas()
+    public function getAlternativas()
     {
         return $this->hasMany(RvAlternativa::className(), ['pre_id' => 'pre_id']);
     }
 
-    public function getRvIntPreguntas()
+    public function getIntPreguntas()
     {
         return $this->hasMany(RvIntPregunta::className(), ['pre_id' => 'pre_id']);
     }
 
-    public function getEva()
+    public function getEvaluacion()
     {
         return $this->hasOne(RvEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
 
-    public function getIte()
+    public function getItem()
     {
         return $this->hasOne(RvItem::className(), ['ite_id' => 'ite_id']);
     }

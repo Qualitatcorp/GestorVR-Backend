@@ -54,17 +54,17 @@ class Licencia extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getEmp()
+    public function getEmpresa()
     {
         return $this->hasOne(Empresa::className(), ['emp_id' => 'emp_id']);
     }
 
-    public function getLit()
+    public function getTipo()
     {
         return $this->hasOne(LicenciaTipo::className(), ['lit_id' => 'lit_id']);
     }
 
-    public function getLicenciaRegistros()
+    public function getRegistros()
     {
         return $this->hasMany(LicenciaRegistro::className(), ['lic_id' => 'lic_id']);
     }

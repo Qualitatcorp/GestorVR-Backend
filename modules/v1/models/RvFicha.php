@@ -62,22 +62,22 @@ class RvFicha extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getEva()
+    public function getEvaluacion()
     {
         return $this->hasOne(RvEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
 
-    public function getTrab()
+    public function getTrabajador()
     {
         return $this->hasOne(Trabajador::className(), ['tra_id' => 'trab_id']);
     }
 
-    public function getPro()
+    public function getProyecto()
     {
         return $this->hasOne(RvProyecto::className(), ['pro_id' => 'pro_id']);
     }
 
-    public function getDisp()
+    public function getDispositivo()
     {
         return $this->hasOne(Dispositivo::className(), ['dis_id' => 'disp_id']);
     }
@@ -87,7 +87,7 @@ class RvFicha extends \yii\db\ActiveRecord
         return $this->hasOne(Pais::className(), ['pais_id' => 'pais_id']);
     }
 
-    public function getRvRespuestas()
+    public function getRespuestas()
     {
         return $this->hasMany(RvRespuesta::className(), ['fic_id' => 'fic_id']);
     }

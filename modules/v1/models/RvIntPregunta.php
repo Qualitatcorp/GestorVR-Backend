@@ -47,7 +47,7 @@ class RvIntPregunta extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getPre()
+    public function getPregunta()
     {
         return $this->hasOne(RvPregunta::className(), ['pre_id' => 'pre_id']);
     }

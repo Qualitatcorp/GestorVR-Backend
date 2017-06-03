@@ -44,12 +44,12 @@ class EmpresaUser extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getEmp()
+    public function getEmpresa()
     {
         return $this->hasOne(Empresa::className(), ['emp_id' => 'emp_id']);
     }
 
-    public function getUsu()
+    public function getUsuario()
     {
         return $this->hasOne(User::className(), ['id' => 'usu_id']);
     }

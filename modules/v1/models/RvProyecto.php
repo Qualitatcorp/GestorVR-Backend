@@ -41,7 +41,7 @@ class RvProyecto extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRvFichas()
+    public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['pro_id' => 'pro_id']);
     }

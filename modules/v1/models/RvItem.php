@@ -38,7 +38,7 @@ class RvItem extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getRvPreguntas()
+    public function getPreguntas()
     {
         return $this->hasMany(RvPregunta::className(), ['ite_id' => 'ite_id']);
     }

@@ -45,12 +45,12 @@ class UserResource extends \yii\db\ActiveRecord
         return $this->hasMany(UserAuthorization::className(), ['res_id' => 'id']);
     }
 
-    public function getUserResourceChildrens()
+    public function getParents()
     {
         return $this->hasMany(UserResourceChildren::className(), ['parent_id' => 'id']);
     }
 
-    public function getUserResourceChildren()
+    public function getChildren()
     {
         return $this->hasOne(UserResourceChildren::className(), ['child_id' => 'id']);
     }
