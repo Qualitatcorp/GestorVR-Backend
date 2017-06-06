@@ -46,7 +46,7 @@ $config = [
         
         'urlManager' => [
             'enablePrettyUrl' => true,
-            // 'enableStrictParsing' => true,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
                 'POST authentication/<action:\w+>' => 'authentication/<action>',
@@ -71,7 +71,6 @@ $config = [
                         'v1/rvproyecto',
                         'v1/rvrespuesta',
                         'v1/trabajador',
-                        'v1/user',
                         'v1/userauthentication',
                         'v1/userauthorization',
                         'v1/userclient',
@@ -83,12 +82,26 @@ $config = [
                         'v1/rvinttipo'
                     ],
                     'extraPatterns' => [
-                        'GET search' => 'search'
+                        'GET search' => 'search',
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/user',
+                    ],
+                    'extraPatterns' => [
+                        'GET search' => 'search',
+                        'GET identity'=>'getidentity',
+                        'PUT identity'=>'updateidentity'
+                        // 'POST changepassword'=>'changepassword'
                     ],
                     'pluralize' => false,
                 ],
             ],
         ],
+
         
     ],
     'params' => $params,

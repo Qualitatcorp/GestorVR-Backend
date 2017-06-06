@@ -4,29 +4,6 @@ namespace app\modules\v1\models;
 
 use Yii;
 
-/**
- * This is the model class for table "user".
- *
- * @property string $id
- * @property string $username
- * @property string $rut
- * @property string $nombre
- * @property string $email
- * @property string $password
- * @property string $cargo
- * @property string $nacimiento
- * @property string $estado
- * @property string $tipo
- * @property string $creacion
- * @property string $modificacion
- *
- * @property EmpresaUser[] $empresaUsers
- * @property Empresa[] $emps
- * @property EmpresaUserDispositivo[] $empresaUserDispositivos
- * @property Dispositivo[] $dis
- * @property UserAuthentication[] $userAuthentications
- * @property UserAuthorization[] $userAuthorizations
- */
 class User extends \yii\db\ActiveRecord
 {
 
@@ -41,6 +18,7 @@ class User extends \yii\db\ActiveRecord
         return [
             [['nombre', 'password'], 'required'],
             [['nacimiento', 'creacion', 'modificacion'], 'safe'],
+            ['password','string','min'=>6],
             [['estado', 'tipo'], 'string'],
             [['username'], 'string', 'max' => 64],
             [['rut'], 'string', 'max' => 12],
@@ -67,6 +45,18 @@ class User extends \yii\db\ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['password'], $fields['estado'], $fields['tipo']);
+        return $fields;
+    }
+
+    public function extraFields()
+    {
+        return ['empresas','dispositivos','authentications','authorizations'];
+    }
+
     public function getEmpresaUsers()
     {
         return $this->hasMany(EmpresaUser::className(), ['usu_id' => 'id']);
@@ -77,22 +67,22 @@ class User extends \yii\db\ActiveRecord
         return $this->hasMany(Empresa::className(), ['emp_id' => 'emp_id'])->viaTable('empresa_user', ['usu_id' => 'id']);
     }
 
-    public function getEmpresaUserDispositivos()
+    public function getEmpresaDispositivos()
     {
         return $this->hasMany(EmpresaUserDispositivo::className(), ['usu_id' => 'id']);
     }
 
-    public function getDispositivo()
+    public function getDispositivos()
     {
         return $this->hasMany(Dispositivo::className(), ['dis_id' => 'dis_id'])->viaTable('empresa_user_dispositivo', ['usu_id' => 'id']);
     }
 
-    public function getUserAuthentication()
+    public function getAuthentications()
     {
         return $this->hasMany(UserAuthentication::className(), ['user_id' => 'id']);
     }
 
-    public function getUserAuthorizations()
+    public function getAuthorizations()
     {
         return $this->hasMany(UserAuthorization::className(), ['user_id' => 'id']);
     }
