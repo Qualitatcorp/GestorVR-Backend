@@ -84,10 +84,11 @@ class UserController extends ActiveController
 			'modificacion'
 		]);
 	}
+
 	public function actionUpdateidentity()
 	{
 		// $this->authorization;
-		return \Yii::$app->user->identity->has("v1_dispositivo_index");
+		// return \Yii::$app->user->identity->has("v1_dispositivo_index");
 		$request=\Yii::$app->request;
 		if($request->isPut){
 			$model = $this->modelClass::findOne(\Yii::$app->user->identity->getId());
@@ -98,5 +99,10 @@ class UserController extends ActiveController
 				return $model;
 			}
 		}
+	}
+
+	public function FunctionName($value='')
+	{
+		# code...
 	}
 }
