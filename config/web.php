@@ -46,7 +46,7 @@ $config = [
         
         'urlManager' => [
             'enablePrettyUrl' => true,
-            // 'enableStrictParsing' => true,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
                 'POST authentication/<action:\w+>' => 'authentication/<action>',
@@ -56,7 +56,6 @@ $config = [
                         'v1/comuna',
                         'v1/dispositivo',
                         'v1/dispositivotipo',
-                        'v1/empresa',
                         'v1/empresadispositivo',
                         'v1/empresauser',
                         'v1/licencia',
@@ -71,7 +70,6 @@ $config = [
                         'v1/rvproyecto',
                         'v1/rvrespuesta',
                         'v1/trabajador',
-                        'v1/user',
                         'v1/userauthentication',
                         'v1/userauthorization',
                         'v1/userclient',
@@ -83,12 +81,45 @@ $config = [
                         'v1/rvinttipo'
                     ],
                     'extraPatterns' => [
-                        'GET search' => 'search'
+                        'GET search' => 'search',
                     ],
                     'pluralize' => false,
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/user',
+                    ],
+                    'extraPatterns' => [
+                        'GET search' => 'search',
+                        'GET identity'=>'getidentity',
+                        'PUT identity'=>'updateidentity'
+                        // 'POST changepassword'=>'changepassword'
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/empresa',
+                    ],
+                    'extraPatterns' => [
+                        'GET search' => 'search',
+                        'GET ficha'=>'getfichas',
+                        'GET ficha/<id:\d+>'=>'getficha',
+                        'GET trabajador'=>'gettrabajadores',
+                        'GET trabajador/<id:\d+>'=>'gettrabajador',
+                        'GET trabajador/<id:\d+>/fichas'=>'gettrabajadorfichas',
+                        // 'POST changepassword'=>'changepassword'
+                    ],
+                    'pluralize' => false,
+                ],
+
+                'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
+                'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
             ],
         ],
+
         
     ],
     'params' => $params,

@@ -105,6 +105,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         }
     }
 
+    public function has($resource)
+    {
+
+        return $this->findBySQl("SELECT  user_authorization.* FROM user_authorization LEFT OUTER JOIN user_resource ON (user_authorization.res_id = user_resource.id) LEFT OUTER JOIN user_resource_children ON (user_resource.id = user_resource_children.parent_id) LEFT OUTER JOIN user_resource c ON (user_resource_children.child_id = c.id) WHERE (user_resource.resource = :res OR  c.resource = :res) AND  user_authorization.user_id =:id",[':id'=>$this->primaryKey,':res'=>$resource])->exists();
+    }
+
+    
+
+
     // public function validatePassword($password)
     // {
     //     return Yii::$app->security->validatePassword($password, $this->password);

@@ -19,7 +19,6 @@ class Authorization extends ActionFilter
 				}else{
 					throw new ForbiddenHttpException(Yii::t('yii', 'No tienes acceso a este recurso'));
 				}
-				return false;
 		}
 		public static function CheckAccess($user_id=null,$resource=null)
 		{

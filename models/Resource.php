@@ -32,12 +32,12 @@ class Resource extends \yii\db\ActiveRecord
         return $this->hasMany(Authorization::className(), ['res_id' => 'id']);
     }
 
-    public function getParents()
+    public function getChildren()
     {
         return $this->hasMany(ResourceChildren::className(), ['parent_id' => 'id']);
     }
 
-    public function getChildren()
+    public function getParents()
     {
         return $this->hasOne(ResourceChildren::className(), ['child_id' => 'id']);
     }

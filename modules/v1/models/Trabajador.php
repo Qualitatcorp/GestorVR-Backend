@@ -76,4 +76,9 @@ class Trabajador extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RvFicha::className(), ['trab_id' => 'tra_id']);
     }
+
+    public function getNombreCompleto()
+    {
+        return implode(" ", array($this->paterno,$this->materno,$this->nombre));
+    }
 }
