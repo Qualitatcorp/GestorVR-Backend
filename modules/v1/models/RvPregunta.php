@@ -75,4 +75,9 @@ class RvPregunta extends \yii\db\ActiveRecord
     {
         return $this->hasOne(RvItem::className(), ['ite_id' => 'ite_id']);
     }
+
+    public function getUrlImagen()
+    {
+        return \Yii::$app->params['BasePathImage'].'rv/'.$this->pre_id."-".str_replace(" ", "%20", $this->imagen);
+    }
 }

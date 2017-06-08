@@ -65,4 +65,11 @@ class RvAlternativa extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RvRespuesta::className(), ['alt_id' => 'alt_id']);
     }
+
+    public function getUrlRespuesta()
+    {
+        if($this->correcta=='SI')
+            return \Yii::$app->params['BasePathImage'].'ficha/correcto.jpg';
+        return \Yii::$app->params['BasePathImage'].'ficha/incorrecto.jpg';
+    }
 }

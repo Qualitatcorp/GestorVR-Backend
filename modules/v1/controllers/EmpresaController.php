@@ -70,4 +70,81 @@ class EmpresaController extends ActiveController
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
 	}
+
+	public function actionGetfichas()
+	{
+		// $query =\app\modules\v1\models\RvFicha::find();
+		$query =\app\modules\v1\models\RvFicha::find()->joinWith('dispositivo.empresa.users')->where('empresa_user.id=:id',[':id'=>\Yii::$app->user->identity->primaryKey]);
+		// return $query->createCommand()->rawSql;
+		$data = new \yii\data\ActiveDataProvider([
+			'query' => $query,
+			// 'sort' => [
+			// 	"attributes"=>[
+			// 		'-fic_id'
+			// 	]
+			// ],
+		  	'pagination' => [
+				'defaultPageSize' => (int)\Yii::$app->request->get('perPage',20),
+				// 'page'=>(int)$request->get('page',0)
+			],
+		]);
+		return $data;
+	}
+
+	public function actionGetficha($id)
+	{
+		$model = \app\modules\v1\models\RvFicha::find()
+			->joinWith('dispositivo.empresa.users')
+			->andWhere('empresa_user.id=:usu AND rv_ficha.fic_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id])
+			->one();
+			// ->createCommand()->rawSql;
+		if($model!==null){
+			return $model;
+		}else{
+			throw new \yii\web\HttpException(401, 'No esta autorizado a acceder a la información del trabajador, este debe estar relacionado a traves de una evaluación.');
+		}
+	}
+
+	public function actionGettrabajadores()
+	{
+		$query =\app\modules\v1\models\Trabajador::find()
+		->distinct()
+		->joinWith('fichas.dispositivo.empresa.users')
+		->where('empresa_user.id=:id',[':id'=>\Yii::$app->user->identity->primaryKey]);
+		$data = new \yii\data\ActiveDataProvider([
+			'query' => $query,
+		  	'pagination' => [
+				'defaultPageSize' => (int)\Yii::$app->request->get('perPage',20),
+			],
+		]);
+		return $data;
+	}
+
+
+
+	public function actionGettrabajador($id)
+	{		
+		$model = \app\modules\v1\models\Trabajador::find()->distinct()->joinWith('fichas.dispositivo.empresa.users')->where('empresa_user.id=:usu AND trabajador.tra_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id])->one();
+		if($model!==null){
+			return $model;
+		}else{
+			throw new \yii\web\HttpException(401, 'No esta autorizado a acceder a la información del trabajador, este debe estar relacionado a traves de una evaluación.');
+		}
+	}
+
+	public function actionGettrabajadorfichas($id)
+	{		
+		$model = \app\modules\v1\models\RvFicha::find()
+			->joinWith('dispositivo.empresa.users')
+			->andWhere('empresa_user.id=:usu AND rv_ficha.trab_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id]);
+			
+		$data = new \yii\data\ActiveDataProvider([
+			'query' => $model,
+		  	'pagination' => [
+				'defaultPageSize' => (int)\Yii::$app->request->get('perPage',20),
+			],
+		]);
+
+		return $data;
+	}
 }

@@ -62,6 +62,19 @@ class RvFicha extends \yii\db\ActiveRecord
         ];
     }
 
+    public function extraFields()
+    {
+        return [
+            'trabajador',
+            'proyecto',
+            'evaluacion',
+            'proyecto',
+            'dispositivo',
+            'pais',
+            'respuestas'
+        ];
+    }
+
     public function getEvaluacion()
     {
         return $this->hasOne(RvEvaluacion::className(), ['eva_id' => 'eva_id']);

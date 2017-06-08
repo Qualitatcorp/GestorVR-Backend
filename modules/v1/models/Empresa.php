@@ -76,7 +76,7 @@ class Empresa extends \yii\db\ActiveRecord
         return $this->hasOne(Comuna::className(), ['com_id' => 'com_id']);
     }
 
-    public function getEmpresaUsers()
+    public function getUsers()
     {
         return $this->hasMany(EmpresaUser::className(), ['emp_id' => 'emp_id']);
     }

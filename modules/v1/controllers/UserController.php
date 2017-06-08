@@ -100,9 +100,4 @@ class UserController extends ActiveController
 			}
 		}
 	}
-
-	public function FunctionName($value='')
-	{
-		# code...
-	}
 }
