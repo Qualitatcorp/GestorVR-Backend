@@ -15,7 +15,7 @@ class AuthenticationController extends Controller
 	public function actionToken()
 	{	
 		$request = Yii::$app->request;
-		$user = User::findMultipleMethod('ruben',['username','rut','email'])->one();
+		$user = User::findMultipleMethod($request->post('username'),['username','rut','email'])->one();
 		switch ($request->post('grant_type')) {
 			case 'password':
 				if(empty($user)){

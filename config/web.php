@@ -105,12 +105,10 @@ $config = [
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
-                        'GET ficha'=>'getfichas',
-                        'GET ficha/<id:\d+>'=>'getficha',
-                        'GET trabajador'=>'gettrabajadores',
-                        'GET trabajador/<id:\d+>'=>'gettrabajador',
-                        'GET trabajador/<id:\d+>/fichas'=>'gettrabajadorfichas',
-                        // 'POST changepassword'=>'changepassword'
+                        'GET <action:(ficha|trabajador)>'=>'index<action>',
+                        'GET <action:(ficha|trabajador)>/<id:\d+>'=>'view<action>',
+                        'GET <action:\w+>/<id:\d+>/<action2:\w+>'=>'view<action><action2>',
+                        'POST <action:\w+>'=>'create<action>',
                     ],
                     'pluralize' => false,
                 ],
