@@ -17,7 +17,7 @@ class Authorization extends ActionFilter
 				if(static::CheckAccess()){
 					return true;
 				}else{
-					throw new ForbiddenHttpException(Yii::t('yii', 'No tienes acceso a este recurso'));
+					throw new ForbiddenHttpException(Yii::t('yii', 'No tienes acceso a este recurso del api rest'));
 				}
 		}
 		public static function CheckAccess($user_id=null,$resource=null)
@@ -34,7 +34,6 @@ class Authorization extends ActionFilter
 				}
 			}
 			static::registerResource($resource);
-			return true;
 			return Yii::$app->db->createCommand("CALL sp_access_resource_user(:user_id, :resource)")
 							->bindValue(':user_id' , $user_id)
 							->bindValue(':resource',static::SerializeResource($resource))

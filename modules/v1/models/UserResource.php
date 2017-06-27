@@ -40,7 +40,12 @@ class UserResource extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getUserAuthorizations()
+    public function extraFields()
+    {
+        return ['children','resourceChildren','parents','authorization'];
+    }
+
+    public function getAuthorizations()
     {
         return $this->hasMany(UserAuthorization::className(), ['res_id' => 'id']);
     }
@@ -48,6 +53,11 @@ class UserResource extends \yii\db\ActiveRecord
     public function getChildren()
     {
         return $this->hasMany(UserResourceChildren::className(), ['parent_id' => 'id']);
+    }
+
+    public function getResourceChildren()
+    {
+        return $this->hasMany(UserResource::className(),['id'=>'child_id'])->via('children');
     }
 
     public function getParents()

@@ -78,7 +78,13 @@ $config = [
                         'v1/rvintalternativa',
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
-                        'v1/rvinttipo'
+                        'v1/analitycsapp',
+                        'v1/analitycsbitacora',
+                        'v1/analitycsbitacoraevento',
+                        'v1/analitycsbitacoraobjeto',
+                        'v1/analitycsbitacoraposicion',
+                        'v1/analitycsdispositivo',
+                        'v1/analitycsescena'
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
@@ -105,12 +111,10 @@ $config = [
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
-                        'GET ficha'=>'getfichas',
-                        'GET ficha/<id:\d+>'=>'getficha',
-                        'GET trabajador'=>'gettrabajadores',
-                        'GET trabajador/<id:\d+>'=>'gettrabajador',
-                        'GET trabajador/<id:\d+>/fichas'=>'gettrabajadorfichas',
-                        // 'POST changepassword'=>'changepassword'
+                        'GET <action:(ficha|trabajador)>'=>'index<action>',
+                        'GET <action:(ficha|trabajador)>/<id:\d+>'=>'view<action>',
+                        'GET <action:\w+>/<id:\d+>/<action2:\w+>'=>'view<action><action2>',
+                        'POST <action:\w+>'=>'create<action>',
                     ],
                     'pluralize' => false,
                 ],
