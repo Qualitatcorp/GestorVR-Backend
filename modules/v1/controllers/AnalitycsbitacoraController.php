@@ -72,20 +72,4 @@ class AnalitycsbitacoraController extends ActiveController
 			'modificacion'
 		]);
 	}
-
-	public function actionUpdateidentity()
-	{
-		// $this->authorization;
-		// return \Yii::$app->user->identity->has("v1_dispositivo_index");
-		$request=\Yii::$app->request;
-		if($request->isPut){
-			$model = $this->modelClass::findOne(\Yii::$app->user->identity->getId());
-			$model->attributes=$request->post();
-			if($model->save()){
-				return $model;
-			}else{
-				return $model;
-			}
-		}
-	}
 }
