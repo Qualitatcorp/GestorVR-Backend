@@ -78,7 +78,13 @@ $config = [
                         'v1/rvintalternativa',
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
-                        'v1/rvinttipo'
+                        'v1/analitycsapp',
+                        'v1/analitycsbitacora',
+                        'v1/analitycsbitacoraevento',
+                        'v1/analitycsbitacoraobjeto',
+                        'v1/analitycsbitacoraposicion',
+                        'v1/analitycsdispositivo',
+                        'v1/analitycsescena'
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
