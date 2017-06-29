@@ -58,18 +58,4 @@ class AnalitycsappController extends ActiveController
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
 	}
-
-	public function actionGetidentity()
-	{
-		return \Yii::$app->user->identity->getAttributes([
-			'username',
-			'rut',
-			'nombre',
-			'email',
-			'cargo',
-			'nacimiento',
-			'creacion',
-			'modificacion'
-		]);
-	}
 }
