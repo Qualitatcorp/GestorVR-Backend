@@ -69,7 +69,6 @@ $config = [
                         'v1/rvpregunta',
                         'v1/rvproyecto',
                         'v1/rvrespuesta',
-                        'v1/trabajador',
                         'v1/userauthentication',
                         'v1/userauthorization',
                         'v1/userclient',
@@ -78,16 +77,31 @@ $config = [
                         'v1/rvintalternativa',
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
-                        'v1/analitycsapp',
                         'v1/analitycsbitacora',
+                        'v1/analitycsbitacoraempresa',
+                        'v1/analitycsbitacoratrabajador',
                         'v1/analitycsbitacoraevento',
                         'v1/analitycsbitacoraobjeto',
-                        'v1/analitycsbitacoraposicion',
-                        'v1/analitycsdispositivo',
-                        'v1/analitycsescena'
+                        'v1/analitycsbitacoraposicion'
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/trabajador',
+                        'v1/analitycsapp',
+                        'v1/analitycsescena',
+                        'v1/analitycsdispositivo',
+                        'v1/analitycssystem'
+                    ],
+                    'extraPatterns' => [
+                        'POST identity' => 'identity',
+                        'GET search' => 'search',
+                        // 'POST changepassword'=>'changepassword'
                     ],
                     'pluralize' => false,
                 ],
@@ -110,6 +124,7 @@ $config = [
                         'v1/empresa',
                     ],
                     'extraPatterns' => [
+                        'POST identity' => 'identity',
                         'GET search' => 'search',
                         'GET <action:(ficha|trabajador)>'=>'index<action>',
                         'GET <action:(ficha|trabajador)>/<id:\d+>'=>'view<action>',
@@ -118,9 +133,9 @@ $config = [
                     ],
                     'pluralize' => false,
                 ],
-
-                'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
-                'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
+                
+                // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
+                // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
             ],
         ],
 

@@ -39,7 +39,7 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
 
     public function extraFields()
     {
-        return ['dipositivo','escenas','system','eventos','objetos','posiciones'];
+        return ['app','dipositivo','escena','system','eventos','objetos','posiciones','trabajadores','empresas','bhe','bht'];
     }
 
     public function getDispositivo()
@@ -57,6 +57,16 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
         return $this->hasOne(AnalitycsSystem::className(), ['id' => 'sys_id']);
     }
 
+    public function getBhe()
+    {
+        return $this->hasMany(AnalitycsBitacoraEmpresa::className(), ['bit_id' => 'id']);
+    }
+
+    public function getEmpresas()
+    {
+        return $this->hasMany(Empresa::className(), ['emp_id' => 'emp_id'])->via('bhe');
+    }
+
     public function getEventos()
     {
         return $this->hasMany(AnalitycsBitacoraEvento::className(), ['bit_id' => 'id']);
@@ -70,5 +80,20 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
     public function getPosiciones()
     {
         return $this->hasMany(AnalitycsBitacoraPosicion::className(), ['bit_id' => 'id']);
+    }
+
+    public function getBht()
+    {
+        return $this->hasMany(AnalitycsBitacoraTrabajador::className(), ['bit_id' => 'id']);
+    }
+
+    public function getTrabajadores()
+    {
+        return $this->hasMany(Trabajador::className(), ['tra_id' => 'tra_id'])->via('bht');
+    }
+
+    public function getApp()
+    {
+        return $this->hasOne(AnalitycsApp::className(), ['id' => 'app_id'])->via('escena');
     }
 }

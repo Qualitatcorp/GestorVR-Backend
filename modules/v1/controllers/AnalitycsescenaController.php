@@ -58,4 +58,16 @@ class AnalitycsescenaController extends ActiveController
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
 	}
+
+	public function actionIdentity()
+	{
+		$request=\Yii::$app->request;
+		$model=$this->modelClass::findOne($request->post());
+		if($model===null){
+			$model=new $this->modelClass();
+			$model->attributes=$request->post();
+			$model->save();
+		}
+		return $model;
+	}
 }
