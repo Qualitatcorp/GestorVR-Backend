@@ -94,7 +94,7 @@ $config = [
                     'controller' => [
                         'v1/trabajador',
                         'v1/analitycsapp',
-                        'v1/analitycsescena',
+                        'v1/analitycsappescena',
                         'v1/analitycsdispositivo',
                         'v1/analitycssystem'
                     ],

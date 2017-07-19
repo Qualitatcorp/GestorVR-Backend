@@ -4,12 +4,12 @@ namespace app\modules\v1\models;
 
 use Yii;
 
-class AnalitycsEscena extends \yii\db\ActiveRecord
+class AnalitycsAppEscena extends \yii\db\ActiveRecord
 {
 
     public static function tableName()
     {
-        return 'analitycs_escena';
+        return 'analitycs_app_escena';
     }
 
 

@@ -19,7 +19,7 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
             [['tiempo'], 'number'],
             [['creado', 'modificado'], 'safe'],
             [['dis_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsDispositivo::className(), 'targetAttribute' => ['dis_id' => 'id']],
-            [['sce_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsEscena::className(), 'targetAttribute' => ['sce_id' => 'id']],
+            [['sce_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsAppEscena::className(), 'targetAttribute' => ['sce_id' => 'id']],
             [['sys_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsSystem::className(), 'targetAttribute' => ['sys_id' => 'id']],
         ];
     }
@@ -49,7 +49,7 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
 
     public function getEscena()
     {
-        return $this->hasOne(AnalitycsEscena::className(), ['id' => 'sce_id']);
+        return $this->hasOne(AnalitycsAppEscena::className(), ['id' => 'sce_id']);
     }
 
     public function getSystem()
