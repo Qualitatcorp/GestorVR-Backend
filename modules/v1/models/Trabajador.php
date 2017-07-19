@@ -72,6 +72,43 @@ class Trabajador extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function validaRUT($rut)
+    {
+        $rut = preg_replace('/[^k0-9]/i', '', $rut);
+        $dv  = substr($rut, -1);
+        $numero = substr($rut, 0, strlen($rut)-1);
+        $i = 2;
+        $suma = 0;
+        foreach(array_reverse(str_split($numero)) as $v)
+        {
+            if($i==8)
+                $i = 2;
+            $suma += $v * $i;
+            ++$i;
+        }
+        $dvr = 11 - ($suma % 11);
+        
+        if($dvr == 11)
+            $dvr = 0;
+        if($dvr == 10)
+            $dvr = 'K';
+        if($dvr == strtoupper($dv))
+            return true;
+        else
+            return false;
+    }
+
+    public static function formatRUT( $rut ) {
+        $rut = preg_replace('/[^k0-9]/i', '', $rut);
+        return number_format( substr ( $rut, 0 , -1 ) , 0, "", ".") . '-' . substr ( $rut, strlen($rut) -1 , 1 );
+    }
+
+    public function isRUT() {
+        if(static::validaRUT($this->rut)){
+            $this->rut = static::formatRUT($this->rut);
+        }
+    }
+
     public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['trab_id' => 'tra_id']);

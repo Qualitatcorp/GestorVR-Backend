@@ -152,11 +152,17 @@ class EmpresaController extends ActiveController
 	{
 		$request = Yii::$app->request;
 		if($request->post()){
-			$model=\app\modules\v1\models\Trabajador::findOne(['rut'=>$request->post('rut')]);
+			$rut=$request->post('rut');
+			if(\app\modules\v1\models\Trabajador::validaRUT($rut)){
+				$_POST['rut']=\app\modules\v1\models\Trabajador::formatRUT($rut);
+				$rut=$_POST['rut'];
+			}
+			$model=\app\modules\v1\models\Trabajador::findOne(['rut'=>$rut]);
 			if($model===null){
 				$model=new \app\modules\v1\models\Trabajador();
 			}
 			$model->attributes=$request->post();
+			$model->isRUT();
 			if($model->save()){
 				return $model;
 			}else{
@@ -164,11 +170,4 @@ class EmpresaController extends ActiveController
 			}
 		}
 	}
-
-	public function actionIdentity()
-	{
-		$request=\Yii::$app->request;
-		return $model=$this->modelClass::findOne($request->post());
-	}
-
 }
