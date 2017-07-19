@@ -69,7 +69,6 @@ $config = [
                         'v1/rvpregunta',
                         'v1/rvproyecto',
                         'v1/rvrespuesta',
-                        'v1/trabajador',
                         'v1/userauthentication',
                         'v1/userauthorization',
                         'v1/userclient',
@@ -78,10 +77,31 @@ $config = [
                         'v1/rvintalternativa',
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
-                        'v1/rvinttipo'
+                        'v1/analitycsbitacora',
+                        'v1/analitycsbitacoraempresa',
+                        'v1/analitycsbitacoratrabajador',
+                        'v1/analitycsbitacoraevento',
+                        'v1/analitycsbitacoraobjeto',
+                        'v1/analitycsbitacoraposicion'
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/trabajador',
+                        'v1/analitycsapp',
+                        'v1/analitycsappescena',
+                        'v1/analitycsdispositivo',
+                        'v1/analitycssystem'
+                    ],
+                    'extraPatterns' => [
+                        'POST identity' => 'identity',
+                        'GET search' => 'search',
+                        // 'POST changepassword'=>'changepassword'
                     ],
                     'pluralize' => false,
                 ],
@@ -104,19 +124,18 @@ $config = [
                         'v1/empresa',
                     ],
                     'extraPatterns' => [
+                        'POST identity' => 'identity',
                         'GET search' => 'search',
-                        'GET ficha'=>'getfichas',
-                        'GET ficha/<id:\d+>'=>'getficha',
-                        'GET trabajador'=>'gettrabajadores',
-                        'GET trabajador/<id:\d+>'=>'gettrabajador',
-                        'GET trabajador/<id:\d+>/fichas'=>'gettrabajadorfichas',
-                        // 'POST changepassword'=>'changepassword'
+                        'GET <action:(ficha|trabajador)>'=>'index<action>',
+                        'GET <action:(ficha|trabajador)>/<id:\d+>'=>'view<action>',
+                        'GET <action:\w+>/<id:\d+>/<action2:\w+>'=>'view<action><action2>',
+                        'POST <action:\w+>'=>'create<action>',
                     ],
                     'pluralize' => false,
                 ],
-
-                'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
-                'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
+                
+                // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
+                // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
             ],
         ],
 

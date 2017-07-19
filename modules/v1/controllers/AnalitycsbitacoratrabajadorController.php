@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class RvproyectoController extends ActiveController
+class AnalitycsbitacoratrabajadorController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\RvProyecto';
+	public $modelClass = 'app\modules\v1\models\AnalitycsBitacoraTrabajador';
 
 	public function behaviors()
 	{

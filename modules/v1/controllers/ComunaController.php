@@ -24,7 +24,7 @@ class ComunaController extends ActiveController
 	{
 		if (!empty($_GET)) {
 			$request=\Yii::$app->request;
-			$reserve=['page','index','order','limit'];
+			$reserve=['per-page','sort','page','expand'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
@@ -44,19 +44,7 @@ class ComunaController extends ActiveController
 						}
 					}
 				}
-				$id=($request->get('index'))?$request->get('index'):'id';
-				$sort=($request->get('order')=='asc')?SORT_ASC:SORT_DESC;
-				$provider = new \yii\data\ActiveDataProvider([
-					'query' => $query,
-					'sort' => [
-						'defaultOrder' => [
-							$id=>$sort
-						]
-					],
-				  	'pagination' => [
-						'defaultPageSize' => 20,'page'=>(isset($_GET['page']))?intval($_GET['page'])-1:0
-					],
-				]);
+				$provider = new \yii\data\ActiveDataProvider(['query' => $query]);
 			} catch (Exception $ex) {
 				throw new \yii\web\HttpException(500, 'Error interno del sistema.');
 			}

@@ -2,6 +2,7 @@
 
 namespace app\modules\v1\controllers;
 
+use Yii;
 use yii\rest\ActiveController;
 
 class EmpresaController extends ActiveController
@@ -23,7 +24,7 @@ class EmpresaController extends ActiveController
 	public function actionSearch()
 	{
 		if (!empty($_GET)) {
-			$request=\Yii::$app->request;
+			$request=Yii::$app->request;
 			$reserve=['page','index','order','limit'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
@@ -71,10 +72,10 @@ class EmpresaController extends ActiveController
 		}
 	}
 
-	public function actionGetfichas()
+	public function actionIndexficha()
 	{
 		// $query =\app\modules\v1\models\RvFicha::find();
-		$query =\app\modules\v1\models\RvFicha::find()->joinWith('dispositivo.empresa.users')->where('empresa_user.id=:id',[':id'=>\Yii::$app->user->identity->primaryKey]);
+		$query =\app\modules\v1\models\RvFicha::find()->joinWith('dispositivo.empresa.users')->where('empresa_user.id=:id',[':id'=>Yii::$app->user->identity->primaryKey]);
 		// return $query->createCommand()->rawSql;
 		$data = new \yii\data\ActiveDataProvider([
 			'query' => $query,
@@ -84,18 +85,18 @@ class EmpresaController extends ActiveController
 			// 	]
 			// ],
 		  	'pagination' => [
-				'defaultPageSize' => (int)\Yii::$app->request->get('perPage',20),
+				'defaultPageSize' => (int)Yii::$app->request->get('perPage',20),
 				// 'page'=>(int)$request->get('page',0)
 			],
 		]);
 		return $data;
 	}
 
-	public function actionGetficha($id)
+	public function actionViewficha($id)
 	{
 		$model = \app\modules\v1\models\RvFicha::find()
 			->joinWith('dispositivo.empresa.users')
-			->andWhere('empresa_user.id=:usu AND rv_ficha.fic_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id])
+			->andWhere('empresa_user.id=:usu AND rv_ficha.fic_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id])
 			->one();
 			// ->createCommand()->rawSql;
 		if($model!==null){
@@ -105,16 +106,16 @@ class EmpresaController extends ActiveController
 		}
 	}
 
-	public function actionGettrabajadores()
+	public function actionIndextrabajador()
 	{
 		$query =\app\modules\v1\models\Trabajador::find()
 		->distinct()
 		->joinWith('fichas.dispositivo.empresa.users')
-		->where('empresa_user.id=:id',[':id'=>\Yii::$app->user->identity->primaryKey]);
+		->where('empresa_user.id=:id',[':id'=>Yii::$app->user->identity->primaryKey]);
 		$data = new \yii\data\ActiveDataProvider([
 			'query' => $query,
 		  	'pagination' => [
-				'defaultPageSize' => (int)\Yii::$app->request->get('perPage',20),
+				'defaultPageSize' => (int)Yii::$app->request->get('perPage',20),
 			],
 		]);
 		return $data;
@@ -122,9 +123,9 @@ class EmpresaController extends ActiveController
 
 
 
-	public function actionGettrabajador($id)
+	public function actionViewtrabajador($id)
 	{		
-		$model = \app\modules\v1\models\Trabajador::find()->distinct()->joinWith('fichas.dispositivo.empresa.users')->where('empresa_user.id=:usu AND trabajador.tra_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id])->one();
+		$model = \app\modules\v1\models\Trabajador::find()->distinct()->joinWith('fichas.dispositivo.empresa.users')->where('empresa_user.id=:usu AND trabajador.tra_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id])->one();
 		if($model!==null){
 			return $model;
 		}else{
@@ -132,19 +133,42 @@ class EmpresaController extends ActiveController
 		}
 	}
 
-	public function actionGettrabajadorfichas($id)
+	public function actionViewtrabajadorfichas($id)
 	{		
 		$model = \app\modules\v1\models\RvFicha::find()
 			->joinWith('dispositivo.empresa.users')
-			->andWhere('empresa_user.id=:usu AND rv_ficha.trab_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id]);
+			->andWhere('empresa_user.id=:usu AND rv_ficha.trab_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id]);
 			
 		$data = new \yii\data\ActiveDataProvider([
 			'query' => $model,
 		  	'pagination' => [
-				'defaultPageSize' => (int)\Yii::$app->request->get('perPage',20),
+				'defaultPageSize' => (int)Yii::$app->request->get('perPage',20),
 			],
 		]);
-
 		return $data;
 	}
+
+	public function actionCreatetrabajador()
+	{
+		$request = Yii::$app->request;
+		if($request->post()){
+			$model=\app\modules\v1\models\Trabajador::findOne(['rut'=>$request->post('rut')]);
+			if($model===null){
+				$model=new \app\modules\v1\models\Trabajador();
+			}
+			$model->attributes=$request->post();
+			if($model->save()){
+				return $model;
+			}else{
+				return $model;
+			}
+		}
+	}
+
+	public function actionIdentity()
+	{
+		$request=\Yii::$app->request;
+		return $model=$this->modelClass::findOne($request->post());
+	}
+
 }

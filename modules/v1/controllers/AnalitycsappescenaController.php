@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class RvproyectoController extends ActiveController
+class AnalitycsappescenaController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\RvProyecto';
+	public $modelClass = 'app\modules\v1\models\AnalitycsAppEscena';
 
 	public function behaviors()
 	{
@@ -57,5 +57,17 @@ class RvproyectoController extends ActiveController
 		} else {
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
+	}
+
+	public function actionIdentity()
+	{
+		$request=\Yii::$app->request;
+		$model=$this->modelClass::findOne($request->post());
+		if($model===null){
+			$model=new $this->modelClass();
+			$model->attributes=$request->post();
+			$model->save();
+		}
+		return $model;
 	}
 }
