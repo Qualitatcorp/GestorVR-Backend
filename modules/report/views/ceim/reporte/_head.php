@@ -11,15 +11,18 @@ $ap =  "El trabajador presenta una <strong>Adecuada</strong> Percepción del Rie
 $be =  "El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento de seguridad de los estándares MEL";
 $me =  "El trabajador presenta un nivel <strong>Medio</strong> de Conocimientos de seguridad de los estándares MEL";
 $ae =  "El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimientos de Seguridad de los estándares ";
+$trabajador = $ficha->trabajador;
+$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
+$evaluacion = $ficha->evaluacion;
 ?>
 <body>
 	<img src="<?=$logo ?>" style="margin-left: 220; width: 200px">
 	<div class="container">
 		<h4 class = "margin-top-30 underline margin-left-20 "  > INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD</h4>
 		<div  >
-			NOMBRE: <?=upper('Daniel Rivera') ?> 
+			NOMBRE: <?=upper($nombreCompleto) ?> 
 			<br>
-			RUT: <?= '17.081.014' ?>
+			RUT: <?= $trabajador->rut ?>
 			<br>
 			EMPRESA: <?= 'xxxxxxx' ?>
 			<br>
@@ -97,6 +100,11 @@ $ae =  "El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimient
 
 		</div>
 
-	</div>
 
+	</div
+<pre>
+<?php 
+ var_dump($evaluacion);
+?>
+</pre>
 </body>
