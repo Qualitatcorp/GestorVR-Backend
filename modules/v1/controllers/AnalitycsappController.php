@@ -59,33 +59,15 @@ class AnalitycsappController extends ActiveController
 		}
 	}
 
-	public function actionGetidentity()
+	public function actionIdentity()
 	{
-		return \Yii::$app->user->identity->getAttributes([
-			'username',
-			'rut',
-			'nombre',
-			'email',
-			'cargo',
-			'nacimiento',
-			'creacion',
-			'modificacion'
-		]);
-	}
-
-	public function actionUpdateidentity()
-	{
-		// $this->authorization;
-		// return \Yii::$app->user->identity->has("v1_dispositivo_index");
 		$request=\Yii::$app->request;
-		if($request->isPut){
-			$model = $this->modelClass::findOne(\Yii::$app->user->identity->getId());
+		$model=$this->modelClass::findOne($request->post());
+		if($model===null){
+			$model=new $this->modelClass();
 			$model->attributes=$request->post();
-			if($model->save()){
-				return $model;
-			}else{
-				return $model;
-			}
+			$model->save();
 		}
+		return $model;
 	}
 }

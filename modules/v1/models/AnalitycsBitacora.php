@@ -19,7 +19,7 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
             [['tiempo'], 'number'],
             [['creado', 'modificado'], 'safe'],
             [['dis_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsDispositivo::className(), 'targetAttribute' => ['dis_id' => 'id']],
-            [['sce_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsEscena::className(), 'targetAttribute' => ['sce_id' => 'id']],
+            [['sce_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsAppEscena::className(), 'targetAttribute' => ['sce_id' => 'id']],
             [['sys_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsSystem::className(), 'targetAttribute' => ['sys_id' => 'id']],
         ];
     }
@@ -39,7 +39,7 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
 
     public function extraFields()
     {
-        return ['dipositivo','escenas','system','eventos','objetos','posiciones'];
+        return ['app','dipositivo','escena','system','eventos','objetos','posiciones','trabajadores','empresas','bhe','bht'];
     }
 
     public function getDispositivo()
@@ -49,12 +49,22 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
 
     public function getEscena()
     {
-        return $this->hasOne(AnalitycsEscena::className(), ['id' => 'sce_id']);
+        return $this->hasOne(AnalitycsAppEscena::className(), ['id' => 'sce_id']);
     }
 
     public function getSystem()
     {
         return $this->hasOne(AnalitycsSystem::className(), ['id' => 'sys_id']);
+    }
+
+    public function getBhe()
+    {
+        return $this->hasMany(AnalitycsBitacoraEmpresa::className(), ['bit_id' => 'id']);
+    }
+
+    public function getEmpresas()
+    {
+        return $this->hasMany(Empresa::className(), ['emp_id' => 'emp_id'])->via('bhe');
     }
 
     public function getEventos()
@@ -70,5 +80,20 @@ class AnalitycsBitacora extends \yii\db\ActiveRecord
     public function getPosiciones()
     {
         return $this->hasMany(AnalitycsBitacoraPosicion::className(), ['bit_id' => 'id']);
+    }
+
+    public function getBht()
+    {
+        return $this->hasMany(AnalitycsBitacoraTrabajador::className(), ['bit_id' => 'id']);
+    }
+
+    public function getTrabajadores()
+    {
+        return $this->hasMany(Trabajador::className(), ['tra_id' => 'tra_id'])->via('bht');
+    }
+
+    public function getApp()
+    {
+        return $this->hasOne(AnalitycsApp::className(), ['id' => 'app_id'])->via('escena');
     }
 }

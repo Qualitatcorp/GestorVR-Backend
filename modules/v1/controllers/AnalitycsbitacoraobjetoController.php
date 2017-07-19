@@ -58,33 +58,4 @@ class AnalitycsbitacoraobjetoController extends ActiveController
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
 	}
-	public function actionGetidentity()
-	{
-		return \Yii::$app->user->identity->getAttributes([
-			'username',
-			'rut',
-			'nombre',
-			'email',
-			'cargo',
-			'nacimiento',
-			'creacion',
-			'modificacion'
-		]);
-	}
-
-	public function actionUpdateidentity()
-	{
-		// $this->authorization;
-		// return \Yii::$app->user->identity->has("v1_dispositivo_index");
-		$request=\Yii::$app->request;
-		if($request->isPut){
-			$model = $this->modelClass::findOne(\Yii::$app->user->identity->getId());
-			$model->attributes=$request->post();
-			if($model->save()){
-				return $model;
-			}else{
-				return $model;
-			}
-		}
-	}
 }

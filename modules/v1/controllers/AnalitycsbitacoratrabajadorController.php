@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class AnalitycsescenaController extends ActiveController
+class AnalitycsbitacoratrabajadorController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\AnalitycsEscena';
+	public $modelClass = 'app\modules\v1\models\AnalitycsBitacoraTrabajador';
 
 	public function behaviors()
 	{
@@ -56,36 +56,6 @@ class AnalitycsescenaController extends ActiveController
 			}
 		} else {
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
-		}
-	}
-
-	public function actionGetidentity()
-	{
-		return \Yii::$app->user->identity->getAttributes([
-			'username',
-			'rut',
-			'nombre',
-			'email',
-			'cargo',
-			'nacimiento',
-			'creacion',
-			'modificacion'
-		]);
-	}
-
-	public function actionUpdateidentity()
-	{
-		// $this->authorization;
-		// return \Yii::$app->user->identity->has("v1_dispositivo_index");
-		$request=\Yii::$app->request;
-		if($request->isPut){
-			$model = $this->modelClass::findOne(\Yii::$app->user->identity->getId());
-			$model->attributes=$request->post();
-			if($model->save()){
-				return $model;
-			}else{
-				return $model;
-			}
 		}
 	}
 }

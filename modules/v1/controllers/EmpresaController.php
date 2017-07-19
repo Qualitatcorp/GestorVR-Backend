@@ -164,4 +164,11 @@ class EmpresaController extends ActiveController
 			}
 		}
 	}
+
+	public function actionIdentity()
+	{
+		$request=\Yii::$app->request;
+		return $model=$this->modelClass::findOne($request->post());
+	}
+
 }
