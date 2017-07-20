@@ -2,12 +2,11 @@
 
 namespace app\modules\v1\controllers;
 
-use yii\rest\ActiveController;
+use yii\rest\Controller;
+use app\modules\v1\models\RvFicha;
 
-class AnalitycsbitacoraeventoController extends ActiveController
+class CeimController extends Controller
 {
-	public $modelClass = 'app\modules\v1\models\AnalitycsBitacoraEvento';
-
 	public function behaviors()
 	{
 		return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
@@ -22,17 +21,17 @@ class AnalitycsbitacoraeventoController extends ActiveController
 
 	public function actionSearch()
 	{
-		if (!empty($_GET)) {
+		// if (!empty($_GET)) {
 			$request=\Yii::$app->request;
 			$reserve=['per-page','sort','page','expand','expand','fields'];
-			$model = new $this->modelClass;
+			$model = new RvFicha();
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
 					throw new \yii\web\HttpException(404, 'Atributo invalido :' . $key);
 				}
 			}
 			try {
-			   	$query = $model->find();
+			   	$query = $model->find()->andWhere(["eva_id"=>50]);
 			   	$range=['id'];
 				foreach ($_GET as $key => $value) {
 					if(!in_array($key,$reserve)){
@@ -54,8 +53,8 @@ class AnalitycsbitacoraeventoController extends ActiveController
 			} else {
 				return $provider;
 			}
-		} else {
-			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
-		}
+		// } else {
+		// 	throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
+		// }
 	}
 }
