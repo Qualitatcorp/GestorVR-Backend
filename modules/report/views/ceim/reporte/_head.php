@@ -20,7 +20,7 @@ $recomendaciones = '';
 $noaprobado = '';
 
 $calificacion = ($ficha->calificacion * 100);
-$calificacion = 69;
+//$calificacion = 89;
 // semaforo
 if($calificacion > 89){
 	$aprobado  = $calificacion . '%';
@@ -34,7 +34,7 @@ if($calificacion > 89){
 // informe 1
 $textInfo1 = '';
 $notaInfo1 = $ceim['dec_nota'] *100;
-//$notaInfo1 = 90;
+// $notaInfo1 = 89;
 if($notaInfo1 > 89){
 	$textInfo1 = $ap;
 }else if($notaInfo1 > 69 && $notaInfo1 < 90){
@@ -46,7 +46,7 @@ if($notaInfo1 > 89){
 //$informe 2
 $textInfo2 = '';
 $notaInfo2 = $ceim['pre_nota'] *100;
-//$notaInfo2 = 69;
+// $notaInfo2 = 90;
 if($notaInfo2 > 89){
 	$textInfo2 = $ae;
 }else if($notaInfo2 > 69 && $notaInfo2 < 90){
@@ -56,11 +56,60 @@ if($notaInfo2 > 89){
 }
 
 //Sec_cantidad
-//if($ceim['sec_cantidad'] > 9){
+ 
 $sec_cantidad = $ceim['sec_cantidad'];
 if($sec_cantidad > 9){
 	$sec_cantidad = 10;
 } 
+//fecha
+setlocale(LC_TIME, "C");
+$date = new DateTime($ficha->creado);
+$mes = $date->format('F');
+$dia = $date->format('d');
+$anio = $date->format('Y');
+switch ($mes) {
+	case 'January':
+	    $mes="Enero";
+		break;
+	case 'February':
+	   $mes="Febrero";
+		break;
+	case 'March':
+	   $mes="Marzo";
+		break;
+	case 'April':
+	    $mes="Abril";
+		break;
+	case 'May':
+	    $mes="Mayo";
+		break;
+	case 'June':
+	    $mes="Junio";
+		break;
+	case 'July':
+	    $mes="Julio";
+	break;	
+	case 'August':
+	    $mes="Agosto";
+		break;	
+	case 'September':
+	    $mes="Setiembre";
+	break;	
+	case 'October':
+	    $mes="Octubre";
+	break;
+	case 'November':
+	    $mes="Noviembre";
+	break;
+	case 'December':
+	    $mes="Diciembre";
+	break;
+	
+	default:
+		# code...
+		break;
+};
+ 
 ?>
 <body>
 	<img src="<?=$logo ?>" style="margin-left: 220; width: 200px">
@@ -73,7 +122,7 @@ if($sec_cantidad > 9){
 			<br>
 			EMPRESA: <?= upper($trabajador->gerencia) ?>
 			<br>
-			FECHA ACREDITACIÓN: <?=  $trabajador->creacion ?>
+			FECHA ACREDITACIÓN: <?= $dia .' '.$mes . ' '. $anio?>
 		</div> 
 		<!-- aprobado -->
 		<div  class = "margin-top-15">

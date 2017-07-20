@@ -5,20 +5,40 @@ use yii\web\Controller;
 
 class CeimController extends Controller
 {
-    public function actionIndex()
+    public function behaviors()
     {
-    	//numero de ficha Parametro
-        $ficha = RvFicha::findOne(17543);
-         
-        echo 'se';
+        return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
+            'authenticator'=>[
+                'class' => \yii\filters\auth\HttpBearerAuth::className()  
+            ],
+            'authorization'=>[
+                'class' => \app\components\Authorization::className(),
+            ],
+        ]);
+    }
 
-     	$head = $this->renderPartial('reporte/_head',array('ficha'=>$ficha),true);
-     	$style =  file_get_contents( './css/ceim.css');
-    	$mpdf = new \mPDF();
-    	$mpdf->charset_in = 'utf-8';
-    	$mpdf->WriteHTML($style,1);
-		$mpdf->WriteHTML($head);
-		$mpdf->Output();
+    public function actionSeguridad($id)
+    {   
+        // 17543
+    	//numero de ficha Parametro
+        $ficha = RvFicha::find()->andWhere(["fic_id" => $id, "eva_id" => '50'])->one();
+       
+       
+        if(!empty($ficha) ){
+            $head = $this->renderPartial('reporte/_head',array('ficha'=>$ficha),true);
+            $style =  file_get_contents( './css/ceim.css');
+            $mpdf = new \mPDF();
+            $mpdf->charset_in = 'utf-8';
+            $mpdf->WriteHTML($style,1);
+            $mpdf->WriteHTML($head);
+            $mpdf->Output();
+        }else{
+            throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+        }
+       
+        
+
+     
 
 		  
          
@@ -26,11 +46,5 @@ class CeimController extends Controller
            
              
     }
-    public Function actionVer(){
-        $r  = RvFicha::findOne(17543);
-        echo '<pre>';
-        var_dump($r->ceim);
-      
-
-    }
+   
 }
