@@ -24,7 +24,7 @@ class LicenciatipoController extends ActiveController
 	{
 		if (!empty($_GET)) {
 			$request=\Yii::$app->request;
-			$reserve=['per-page','sort','page','expand'];
+			$reserve=['per-page','sort','page','expand','expand','fields'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {

@@ -83,7 +83,8 @@ $config = [
                         'v1/analitycsbitacoratrabajador',
                         'v1/analitycsbitacoraevento',
                         'v1/analitycsbitacoraobjeto',
-                        'v1/analitycsbitacoraposicion'
+                        'v1/analitycsbitacoraposicion',
+                        'v1/ceim'
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',

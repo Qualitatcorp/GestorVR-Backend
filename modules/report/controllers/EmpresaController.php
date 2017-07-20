@@ -44,4 +44,5 @@ class EmpresaController extends Controller
 		// $mpdf->autoLangToFont = true;
 		$mpdf->Output("Ficha de evaluación Nro  ".$model->primaryKey.".pdf","I");
     }
+
 }
