@@ -5,17 +5,17 @@ use yii\web\Controller;
 
 class CeimController extends Controller
 {
-    public function behaviors()
-    {
-        return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
-            'authenticator'=>[
-                'class' => \yii\filters\auth\HttpBearerAuth::className()  
-            ],
-            'authorization'=>[
-                'class' => \app\components\Authorization::className(),
-            ],
-        ]);
-    }
+    // public function behaviors()
+    // {
+    //     return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
+    //         'authenticator'=>[
+    //             'class' => \yii\filters\auth\HttpBearerAuth::className()  
+    //         ],
+    //         'authorization'=>[
+    //             'class' => \app\components\Authorization::className(),
+    //         ],
+    //     ]);
+    // }
 
     public function actionSeguridad($id)
     {   
@@ -28,10 +28,11 @@ class CeimController extends Controller
             $head = $this->renderPartial('reporte/_head',array('ficha'=>$ficha),true);
             $style =  file_get_contents( './css/ceim.css');
             $mpdf = new \mPDF();
+ 
             $mpdf->charset_in = 'utf-8';
             $mpdf->WriteHTML($style,1);
             $mpdf->WriteHTML($head);
-            $mpdf->Output();
+            $mpdf->Output('ceim-'.$id.'pdf','I');
         }else{
             throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
         }
