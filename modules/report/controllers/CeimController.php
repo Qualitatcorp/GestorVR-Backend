@@ -26,4 +26,11 @@ class CeimController extends Controller
            
              
     }
+    public Function actionVer(){
+        $r  = RvFicha::findOne(17543);
+        echo '<pre>';
+        var_dump($r->ceim);
+      
+
+    }
 }

@@ -14,6 +14,53 @@ $ae =  "El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimient
 $trabajador = $ficha->trabajador;
 $nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
 $evaluacion = $ficha->evaluacion;
+$ceim = $ficha->ceim;
+$aprobado = '';
+$recomendaciones = '';
+$noaprobado = '';
+
+$calificacion = ($ficha->calificacion * 100);
+$calificacion = 69;
+// semaforo
+if($calificacion > 89){
+	$aprobado  = $calificacion . '%';
+}else if($calificacion > 69 && $calificacion < 90){
+	$recomendaciones = $calificacion . '%';
+}else{
+	$noaprobado = $calificacion . '%';
+}
+//end semaforo
+
+// informe 1
+$textInfo1 = '';
+$notaInfo1 = $ceim['dec_nota'] *100;
+//$notaInfo1 = 90;
+if($notaInfo1 > 89){
+	$textInfo1 = $ap;
+}else if($notaInfo1 > 69 && $notaInfo1 < 90){
+	$textInfo1 = $mp;
+}else{
+	$textInfo1 = $bp;
+}
+
+//$informe 2
+$textInfo2 = '';
+$notaInfo2 = $ceim['pre_nota'] *100;
+//$notaInfo2 = 69;
+if($notaInfo2 > 89){
+	$textInfo2 = $ae;
+}else if($notaInfo2 > 69 && $notaInfo2 < 90){
+	$textInfo2 = $me;
+}else{
+	$textInfo2 = $be;
+}
+
+//Sec_cantidad
+//if($ceim['sec_cantidad'] > 9){
+$sec_cantidad = $ceim['sec_cantidad'];
+if($sec_cantidad > 9){
+	$sec_cantidad = 10;
+} 
 ?>
 <body>
 	<img src="<?=$logo ?>" style="margin-left: 220; width: 200px">
@@ -32,7 +79,7 @@ $evaluacion = $ficha->evaluacion;
 		<div  class = "margin-top-15">
 			<div class="resultado aprobado floatL">
 				<div class = "porcentaje ">
-					30%
+					<?=$aprobado?>
 				</div>
 			</div>
 			<div class = "descripcion">
@@ -45,7 +92,7 @@ $evaluacion = $ficha->evaluacion;
 		<div>
 			<div class="resultado recomendaciones floatL">
 				<div class = "porcentaje ">
-					30%
+					 <?= $recomendaciones?>
 				</div>
 			</div>
 			<div class = "descripcion">
@@ -58,7 +105,7 @@ $evaluacion = $ficha->evaluacion;
 		<div>
 			<div class="resultado noaprobado floatL">
 				<div class = "porcentaje ">
-					30%
+					<?= $noaprobado ?>
 				</div>
 			</div>
 			<div class = "descripcion">
@@ -70,41 +117,41 @@ $evaluacion = $ficha->evaluacion;
 			<div class="bold">  1.- Informe de y Percepción del Riesgo Trabajador   </div>
 			<br>
 			<div class="bold floatL Width20">
-				NOTA: <?= '36%' ?>  
+				NOTA: <?= $notaInfo1 ?>  %
 			</div>
 			<div class=" Width40 ">
-				<?= $bp ?> 
+				<?= $textInfo1; ?> 
 			</div>
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-20"> &#8226; Número de detección de errores del ambiente: 5 (12)</div>
-				<div class="margin-left-20"> &#8226; Número de visualización de errores externos al evento: 2 (10) </div>
+				<div class="margin-left-20"> &#8226; Número de detección de errores del ambiente: <?= $ceim['pri_cantidad']?> (12)</div>
+				<div class="margin-left-20"> &#8226; Número de visualización de errores externos al evento: <?= $sec_cantidad ?> (10) </div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
 			<div class="bold">  2.- Informe de Conocimiento Estándares MEL   </div>
 			<br>
 			<div class="bold floatL Width20">
-				NOTA: <?= '36%' ?>  
+				NOTA: <?= $notaInfo2 ?> %
 			</div>
 			<div class="Width40 ">
-				<?= $me ?> 
+				<?= $textInfo2 ?> 
 			</div>
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-20">&#8226; Número de detección de errores del ambiente: 5 (12)</div>
-				<div class="margin-left-20">&#8226; Número de visualización de errores externos al evento: 2 (10) </div>
+				<div class="margin-left-20">&#8226;	Respuestas Correctas Conocimiento: <?=$ceim['pre_cantidad']?> (20)</div>
+				 
 			</div>
 
 		</div>
 
-
-	</div
 <pre>
 <?php 
- //var_dump($trabajador);
+ 
 ?>
 </pre>
+	</div
+
 </body>
