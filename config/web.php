@@ -50,6 +50,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'POST authentication/<action:\w+>' => 'authentication/<action>',
+
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
@@ -134,9 +135,10 @@ $config = [
                     ],
                     'pluralize' => false,
                 ],
-                
+              
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
+               'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>',
             ],
         ],
 
