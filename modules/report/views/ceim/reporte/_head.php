@@ -24,12 +24,12 @@ $evaluacion = $ficha->evaluacion;
 			<br>
 			RUT: <?= $trabajador->rut ?>
 			<br>
-			EMPRESA: <?= 'xxxxxxx' ?>
+			EMPRESA: <?= upper($trabajador->gerencia) ?>
 			<br>
-			FECHA ACREDITACIÓN: <?= '11 Julio 2017' ?>
+			FECHA ACREDITACIÓN: <?=  $trabajador->creacion ?>
 		</div> 
 		<!-- aprobado -->
-		<div>
+		<div  class = "margin-top-15">
 			<div class="resultado aprobado floatL">
 				<div class = "porcentaje ">
 					30%
@@ -104,7 +104,7 @@ $evaluacion = $ficha->evaluacion;
 	</div
 <pre>
 <?php 
- var_dump($evaluacion);
+ //var_dump($trabajador);
 ?>
 </pre>
 </body>
