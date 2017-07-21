@@ -19,12 +19,12 @@ $aprobado = '';
 $recomendaciones = '';
 $noaprobado = '';
 
-$calificacion = ($ficha->calificacion * 100);
+$calificacion =number_format($ficha->calificacion * 100);
 //$calificacion = 89;
 // semaforo
 if($calificacion > 89){
 	$aprobado  = $calificacion . '%';
-}else if($calificacion > 69 && $calificacion < 90){
+}else if($calificacion >=70 && $calificacion < 90){
 	$recomendaciones = $calificacion . '%';
 }else{
 	$noaprobado = $calificacion . '%';
@@ -33,11 +33,11 @@ if($calificacion > 89){
 
 // informe 1
 $textInfo1 = '';
-$notaInfo1 = $ceim['dec_nota'] *100;
+$notaInfo1 = number_format($ceim['dec_nota'] *100);
 // $notaInfo1 = 89;
 if($notaInfo1 > 89){
 	$textInfo1 = $ap;
-}else if($notaInfo1 > 69 && $notaInfo1 < 90){
+}else if($notaInfo1 >=70 && $notaInfo1 < 90){
 	$textInfo1 = $mp;
 }else{
 	$textInfo1 = $bp;
@@ -45,11 +45,11 @@ if($notaInfo1 > 89){
 
 //$informe 2
 $textInfo2 = '';
-$notaInfo2 = $ceim['pre_nota'] *100;
+$notaInfo2 =number_format($ceim['pre_nota'] *100);
 // $notaInfo2 = 90;
 if($notaInfo2 > 89){
 	$textInfo2 = $ae;
-}else if($notaInfo2 > 69 && $notaInfo2 < 90){
+}else if($notaInfo2 >=70 && $notaInfo2 < 90){
 	$textInfo2 = $me;
 }else{
 	$textInfo2 = $be;

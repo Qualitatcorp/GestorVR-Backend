@@ -30,6 +30,8 @@ class CeimController extends Controller
             $mpdf = new \mPDF();
  
             $mpdf->charset_in = 'utf-8';
+
+            $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$id);
             $mpdf->WriteHTML($style,1);
             $mpdf->WriteHTML($head);
             $mpdf->Output('ceim-'.$id.'pdf','I');
