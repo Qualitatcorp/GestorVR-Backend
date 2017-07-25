@@ -164,11 +164,11 @@ class RvFicha extends \yii\db\ActiveRecord
                         if(array_search($value->alt_id, $base['primario']['decidibles']['incorrectas'])!==false){
                             $pri_dec_total+=1; 
                         }else{
-                            if(array_search($value->alt_id, $base['primario']['distractores']['correctas'])!==false){
+                            if(array_search($value->alt_id, $base['primario']['distractores']['incorrectas'])!==false){
                                 $pri_dis_correcta+=1;
                                 $pri_dis_total+=1; 
                             }else{
-                                if(array_search($value->alt_id, $base['primario']['distractores']['incorrectas'])!==false){
+                                if(array_search($value->alt_id, $base['primario']['distractores']['correctas'])!==false){
                                     $pri_dis_total+=1; 
                                 }else{
                                     if(array_search($value->alt_id, $base['secundario']['decidibles']['correctas'])!==false){
@@ -178,11 +178,11 @@ class RvFicha extends \yii\db\ActiveRecord
                                         if(array_search($value->alt_id, $base['secundario']['decidibles']['incorrectas'])!==false){
                                             $sec_dec_total+=1; 
                                         }else{
-                                            if(array_search($value->alt_id, $base['secundario']['distractores']['correctas'])!==false){
+                                            if(array_search($value->alt_id, $base['secundario']['distractores']['incorrectas'])!==false){
                                                 $sec_dis_correcta+=1;
                                                 $sec_dis_total+=1; 
                                             }else{
-                                                if(array_search($value->alt_id, $base['secundario']['distractores']['incorrectas'])!==false){
+                                                if(array_search($value->alt_id, $base['secundario']['distractores']['correctas'])!==false){
                                                     $sec_dis_total+=1; 
                                                 }else{
                                                     return ['RESPUESTA INEXISTENTE'];
@@ -203,7 +203,8 @@ class RvFicha extends \yii\db\ActiveRecord
         $pri_dis_pond=5.625;
         $sec_dec_pond=5;
         $sec_dis_pond=1.875;
-        $pre_nota=($pre_total!=0)?$pre_correcta/$pre_total:0;
+        // $pre_nota=($pre_total!=0)?$pre_correcta/$pre_total:0;
+        $pre_nota=($pre_total!=0)?$pre_correcta/20:0;
 
         $dec_acierto=
             $pri_dec_correcta*$pri_dec_pond
@@ -216,29 +217,39 @@ class RvFicha extends \yii\db\ActiveRecord
             +$sec_dec_total*$sec_dec_pond
             +$sec_dis_total*$sec_dis_pond;
         $dec_nota=($dec_total!=0)?$dec_acierto/$dec_total:0;
+
+        $nota=($dec_nota+$pre_nota)/2;
+        $nota=(float)number_format($nota,2);
+        
+        if((float)$this->calificacion!=$nota){
+            $this->calificacion=$nota;
+            $this->save();
+        }
+
         return [
             "dec_nota"=>(float)number_format($dec_nota,2),
             "pri_cantidad"=>$pri_dec_correcta,
             "sec_cantidad"=>$sec_dec_correcta,
             "pre_nota"=>$pre_nota,
             "pre_cantidad"=>$pre_correcta,
-            // "summary"=>[
-            //     "pre_correcta"=>$pre_correcta,
-            //     "pre_total"=>$pre_total,
-            //     "pri_dec_correcta"=>$pri_dec_correcta,
-            //     "pri_dec_total"=>$pri_dec_total,        
-            //     "pri_dis_correcta"=>$pri_dis_correcta,
-            //     "pri_dis_total"=>$pri_dis_total,
-            //     "sec_dec_correcta"=>$sec_dec_correcta,
-            //     "sec_dec_total"=>$sec_dec_total,        
-            //     "sec_dis_correcta"=>$sec_dis_correcta,
-            //     "sec_dis_total"=>$sec_dis_total,
-            //     'pre_pond'=>$pre_pond,
-            //     'pri_dec_pond'=>$pri_dec_pond,
-            //     'pri_dis_pond'=>$pri_dis_pond,
-            //     'sec_dec_pond'=>$sec_dec_pond,
-            //     'sec_dis_pond'=>$sec_dis_pond
-            // ]
+            "summary"=>[
+                "pre_correcta"=>$pre_correcta,
+                "pre_total"=>$pre_total,
+                "pri_dec_correcta"=>$pri_dec_correcta,
+                "pri_dec_total"=>$pri_dec_total,        
+                "pri_dis_correcta"=>$pri_dis_correcta,
+                "pri_dis_total"=>$pri_dis_total,
+                "sec_dec_correcta"=>$sec_dec_correcta,
+                "sec_dec_total"=>$sec_dec_total,        
+                "sec_dis_correcta"=>$sec_dis_correcta,
+                "sec_dis_total"=>$sec_dis_total,
+                'pre_pond'=>$pre_pond,
+                'pri_dec_pond'=>$pri_dec_pond,
+                'pri_dis_pond'=>$pri_dis_pond,
+                'sec_dec_pond'=>$sec_dec_pond,
+                'sec_dis_pond'=>$sec_dis_pond,
+                'nota'=>$nota
+            ]
         ];
     }
 }
