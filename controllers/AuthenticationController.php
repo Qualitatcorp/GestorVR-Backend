@@ -13,7 +13,7 @@ use yii\web\HttpException;
 class AuthenticationController extends Controller
 {
 	public function actionToken()
-	{	
+	{
 		$request = Yii::$app->request;
 		$user = User::findMultipleMethod($request->post('username'),['username','rut','email'])->one();
 		switch ($request->post('grant_type')) {
@@ -43,6 +43,7 @@ class AuthenticationController extends Controller
 		if($request->post('refresh')==='true'){
 			$Auth['refresh']=$Authentication->refresh;
 		}
+		Authentication::UpdateHistory();
 		return $Auth;
 	}
 

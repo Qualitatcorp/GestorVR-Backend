@@ -46,7 +46,14 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         //     return $auth->user;
         // }
         // return null;
-        return static::find()->joinWith('authentications')->where(['token'=>$token])->andWhere(['>','expire',time()])->one();
+        
+
+        return static::find()->
+        joinWith('authentications')
+            ->andWhere(['status'=>'ALLOW'])
+            ->andWhere(['token'=>$token])
+            ->andWhere(['>','expire',time()])
+            ->one();
     }
 
     public function getId()
@@ -98,6 +105,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'user_id'=>$this->primaryKey,
             'client_id'=>$client->primaryKey
         ];
+        
         if($Authentication->save()){
             return $Authentication;       
         }else{
