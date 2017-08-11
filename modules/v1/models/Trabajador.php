@@ -4,27 +4,6 @@ namespace app\modules\v1\models;
 
 use Yii;
 
-/**
- * This is the model class for table "trabajador".
- *
- * @property string $tra_id
- * @property string $rut
- * @property string $nombre
- * @property string $paterno
- * @property string $materno
- * @property string $nacimiento
- * @property string $fono
- * @property string $mail
- * @property string $gerencia
- * @property string $cargo
- * @property integer $antiguedad
- * @property string $estado_civil
- * @property integer $hijos
- * @property string $creacion
- * @property string $modificado
- *
- * @property RvFicha[] $rvFichas
- */
 class Trabajador extends \yii\db\ActiveRecord
 {
 
@@ -98,6 +77,11 @@ class Trabajador extends \yii\db\ActiveRecord
             return false;
     }
 
+    public function extraFields()
+    {
+        return ['fichas','src','rs'];
+    }
+
     public static function formatRUT( $rut ) {
         $rut = preg_replace('/[^k0-9]/i', '', $rut);
         return number_format( substr ( $rut, 0 , -1 ) , 0, "", ".") . '-' . substr ( $rut, strlen($rut) -1 , 1 );
@@ -112,6 +96,16 @@ class Trabajador extends \yii\db\ActiveRecord
     public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['trab_id' => 'tra_id']);
+    }
+
+    public function getRs()
+    {
+        return $this->hasMany(TrabajadorRecursos::className(), ['tra_id' => 'tra_id']);
+    }    
+
+    public function getSrc()
+    {
+        return $this->hasMany(RecursosSources::className(), ['id' => 'src_id'])->via('rs');
     }
 
     public function getNombreCompleto()

@@ -94,6 +94,17 @@ $config = [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
+                        'v1/recursossources',
+                    ],
+                    'extraPatterns' => [
+                        'GET file/<id:\d+>' => 'file',
+                    ],
+                    'pluralize' => false,
+                ],
+
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
                         'v1/trabajador',
                         'v1/analitycsapp',
                         'v1/analitycsappescena',
