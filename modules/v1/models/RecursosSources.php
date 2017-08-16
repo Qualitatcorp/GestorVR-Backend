@@ -20,7 +20,8 @@ class RecursosSources extends \yii\db\ActiveRecord
             [['type'], 'string'],
             [['src', 'title'], 'string', 'max' => 255],
             [['src'], 'unique'],
-            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'apk,txt,htm,html,php,css,js,json,xml,swf,flv,png,jpe,jpeg,jpg,gif,bmp,ico,tiff,tif,svg,svgz,zip,rar,exe,msi,cab,mp3,qt,mov,pdf,psd,ai,eps,ps,doc,docx,rtf,xls,xlsx,ppt,pptx,odt,ods'],
+            [['file'], 'file', 'skipOnEmpty' => true, 'mimeTypes' => 'application/*,audio/*,video/*,text/*,image/*'],
+            // [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => ['7z','ai','apk','avi','bmp','cab','css','doc','docx','eps','exe','flv','gif','htm','html','ico','jpe','jpeg','jpg','js','json','mov','mp3','mp4','msi','ods','odt','pdf','php','png','ppt','pptx','ps','psd','qt','rar','rtf','svg','svgz','swf','tif','tiff','txt','xls','xlsx','xml','zip']],
         ];
     }
 
@@ -37,10 +38,16 @@ class RecursosSources extends \yii\db\ActiveRecord
     public function fields()
     {
         $fields = parent::fields();
-        unset($fields['src']);
-        $fields[]='url';
-        $fields[]='dir';
+        unset($fields['src'],$fields['type']);
+        // $fields[]='url';
+        $fields[]='mimeType';
+        // $fields[]='dir';
         return $fields;
+    }
+
+    public function extraFields()
+    {
+        return ['src','size','dir','url','exists'];
     }
 
     public function getTrabajadorRecursos()
@@ -58,25 +65,6 @@ class RecursosSources extends \yii\db\ActiveRecord
         return Yii::$app->params['baseDirFront'].$this->src;
     }
 
-    // public function upload()
-    // {
-    //     $file = $this->file[0]; //el parametro esta definido para recibir mas de un archivo, pero trabajaremos con uno 
-    //     $this->src = \Yii::$app->security->generateRandomString(); 
-    //     $this->type =  $file->type;
-    //     $this->title = $file->baseName.'.'.$file->extension;
-    //     if($this->save()){
-    //         $nombre = $this->id.'-'.\Yii::$app->security->generateRandomString(). '.' . $file->extension;
-    //         $ruta_guardado  = '../..'.\Yii::$app->params['url_frontend'].'/src/' . $nombre;
-    //         $src = \Yii::$app->params['url_frontend'].'/src/' . $nombre;
-    //         $file->saveAs($ruta_guardado);
-    //         $this->src = $src;
-    //         $this->save();
-    //         return true;
-    //     }else{
-    //         return false;
-    //     }
-    // }
-
     public function beforeValidate()
     {
         $this->file=\yii\web\UploadedFile::getInstanceByName('file');
@@ -84,6 +72,8 @@ class RecursosSources extends \yii\db\ActiveRecord
             $this->title = $this->file->baseName.'.'.$this->file->extension;
             $this->type =  $this->file->type;
             $this->src = \Yii::$app->security->generateRandomString().'.'.$this->file->extension;
+            // var_dump($this->file->size);
+            // exit;
         }
         return parent::beforeValidate();
     }
@@ -96,13 +86,27 @@ class RecursosSources extends \yii\db\ActiveRecord
         } 
     }
 
-    public function upload()
+    public function getSize()
     {
-        if ($this->validate()) {
-            $this->file->saveAs('uploads/' . $this->file->baseName . '.' . $this->file->extension);
-            return true;
-        } else {
-            return false;
+        if($this->exists){
+            return filesize($this->dir);           
+        }
+    }
+
+    public function getExists()
+    {
+        return file_exists($this->dir);
+    }
+
+    public function getMimeType()
+    {        
+        if($this->exists){
+            $type=mime_content_type ($this->dir);
+            if($type!==$this->type){
+                $this->type=$type;
+                $this->updateAttributes(['type']);
+            }
+            return $type;
         }
     }
 

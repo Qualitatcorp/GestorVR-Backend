@@ -72,7 +72,9 @@ class RvFicha extends \yii\db\ActiveRecord
             'dispositivo',
             'pais',
             'respuestas',
-            'ceim'
+            'ceim',
+            'recursos',
+            'src'
         ];
     }
 
@@ -104,6 +106,16 @@ class RvFicha extends \yii\db\ActiveRecord
     public function getRespuestas()
     {
         return $this->hasMany(RvRespuesta::className(), ['fic_id' => 'fic_id']);
+    }
+
+    public function getRecursos()
+    {
+        return $this->hasMany(RvFichaRecursos::className(), ['fic_id' => 'fic_id']);
+    }
+
+    public function getSrc()
+    {
+        return $this->hasMany(RecursosSources::className(), ['id' => 'src_id'])->via('recursos');
     }
 
     public function getCeim()

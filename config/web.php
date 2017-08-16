@@ -66,6 +66,7 @@ $config = [
                         'v1/rvalternativa',
                         'v1/rvevaluacion',
                         'v1/rvficha',
+                        'v1/rvficharecursos',
                         'v1/rvitem',
                         'v1/rvpregunta',
                         'v1/rvproyecto',
@@ -98,6 +99,8 @@ $config = [
                     ],
                     'extraPatterns' => [
                         'GET file/<id:\d+>' => 'file',
+                        'GET <id:\d+>/view' => 'fileview',
+                        'GET <id:\d+>/download' => 'filedownload',
                     ],
                     'pluralize' => false,
                 ],

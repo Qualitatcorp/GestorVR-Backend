@@ -4,21 +4,21 @@ namespace app\modules\v1\models;
 
 use Yii;
 
-class TrabajadorRecursos extends \yii\db\ActiveRecord
+class RvFichaRecursos extends \yii\db\ActiveRecord
 {
     public static function tableName()
     {
-        return 'trabajador_recursos';
+        return 'rv_ficha_recursos';
     }
 
     public function rules()
     {
         return [
-            [['tra_id', 'src_id', 'tipo'], 'required'],
-            [['tra_id', 'src_id'], 'integer'],
+            [['fic_id', 'src_id', 'tipo'], 'required'],
+            [['fic_id', 'src_id'], 'integer'],
             [['tipo'], 'string'],
-            [['creado'], 'safe'],
-            [['tra_id'], 'exist', 'skipOnError' => true, 'targetClass' => Trabajador::className(), 'targetAttribute' => ['tra_id' => 'tra_id']],
+            [['name'], 'string', 'max' => 255],
+            [['fic_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvFicha::className(), 'targetAttribute' => ['fic_id' => 'fic_id']],
             [['src_id'], 'exist', 'skipOnError' => true, 'targetClass' => RecursosSources::className(), 'targetAttribute' => ['src_id' => 'id']],
         ];
     }
@@ -27,16 +27,16 @@ class TrabajadorRecursos extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'tra_id' => 'Tra ID',
+            'fic_id' => 'Fic ID',
             'src_id' => 'Src ID',
             'tipo' => 'Tipo',
-            'creado' => 'Creado',
+            'name' => 'Name',
         ];
     }
 
-    public function getTrabajador()
+    public function getFicha()
     {
-        return $this->hasOne(Trabajador::className(), ['tra_id' => 'tra_id']);
+        return $this->hasOne(RvFicha::className(), ['fic_id' => 'fic_id']);
     }
 
     public function getSrc()
