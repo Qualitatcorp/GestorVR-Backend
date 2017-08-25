@@ -12,7 +12,10 @@ $config = [
     'components' => [
         'request' => [
             'cookieValidationKey' => 'yC8juG2gpIhV7Rmlx14cPgy3WdB6u4kX',
+            'enableCsrfCookie'=>false,
             'enableCsrfValidation' => false,
+            'enableCookieValidation'=>false,
+
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
@@ -55,17 +58,15 @@ $config = [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
                         'v1/comuna',
-                        'v1/dispositivo',
-                        'v1/dispositivotipo',
                         'v1/empresadispositivo',
                         'v1/empresauser',
                         'v1/licencia',
                         'v1/licenciaregistro',
                         'v1/licenciatipo',
                         'v1/pais',
+                        'v1/rvficha',
                         'v1/rvalternativa',
                         'v1/rvevaluacion',
-                        'v1/rvficha',
                         'v1/rvficharecursos',
                         'v1/rvitem',
                         'v1/rvpregunta',
@@ -104,10 +105,11 @@ $config = [
                     ],
                     'pluralize' => false,
                 ],
-
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
+                        'v1/dispositivo',
+                        'v1/dispositivotipo',
                         'v1/trabajador',
                         'v1/analitycsapp',
                         'v1/analitycsappescena',

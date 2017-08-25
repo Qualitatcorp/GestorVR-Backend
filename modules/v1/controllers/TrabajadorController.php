@@ -59,15 +59,17 @@ class TrabajadorController extends ActiveController
 		}
 	}
 
+
 	public function actionIdentity()
 	{
-		$request=\Yii::$app->request;
-		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
-		if($model===null){
+		$post=\Yii::$app->request->post();
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
 			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
 		}
-		$model->attributes=$request->post();
-		$model->save();
 		return $model;
 	}
 }

@@ -54,6 +54,11 @@ class RvEvaluacion extends \yii\db\ActiveRecord
         ];
     }
 
+    public function extraFields()
+    {
+        return ['preguntas','alternativas'];
+    }
+
     public function getTipo()
     {
         return $this->hasOne(RvTipo::className(), ['tev_id' => 'tev_id']);
@@ -72,5 +77,10 @@ class RvEvaluacion extends \yii\db\ActiveRecord
     public function getPreguntas()
     {
         return $this->hasMany(RvPregunta::className(), ['eva_id' => 'eva_id']);
+    }
+
+    public function getAlternativas()
+    {
+        return $this->hasMany(RvAlternativa::className(),['pre_id'=>'pre_id'])->via('preguntas');
     }
 }

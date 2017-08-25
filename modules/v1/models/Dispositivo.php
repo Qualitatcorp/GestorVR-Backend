@@ -91,4 +91,9 @@ class Dispositivo extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RvFicha::className(), ['disp_id' => 'dis_id']);
     }
+
+    public function getPermission()
+    {
+        return $this->habilitado=="SI"&&$this->activado="SI";
+    }
 }

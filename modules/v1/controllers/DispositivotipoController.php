@@ -20,6 +20,19 @@ class DispositivotipoController extends ActiveController
 		]);
 	}
 
+	public function actionIdentity()
+	{
+		$post=\Yii::$app->request->post();
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
+			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
+		}
+		return $model;
+	}
+
 	public function actionSearch()
 	{
 		if (!empty($_GET)) {
