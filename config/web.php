@@ -70,7 +70,6 @@ $config = [
                         'v1/rvficharecursos',
                         'v1/rvitem',
                         'v1/rvpregunta',
-                        'v1/rvproyecto',
                         'v1/rvrespuesta',
                         'v1/userauthentication',
                         'v1/userauthorization',
@@ -108,6 +107,7 @@ $config = [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
+                        'v1/rvproyecto',
                         'v1/dispositivo',
                         'v1/dispositivotipo',
                         'v1/trabajador',
