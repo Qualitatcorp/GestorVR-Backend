@@ -6,6 +6,7 @@ use yii\rest\ActiveController;
 use yii\helpers\Json;
 
 use app\modules\v1\models\Dispositivo;
+use app\modules\v1\models\RvFicha;
 use app\modules\v1\models\RvAlternativa;
 use app\modules\v1\models\RvRespuesta;
 
@@ -28,47 +29,70 @@ class RvfichaController extends ActiveController
 	public function actionEvaluation()
 	{
 		$request=\Yii::$app->request;
+		if(!$request->isPost)
+		{
+			throw new \yii\web\HttpException(405, 'Metodo no permitido.');
+		}
 		/*
-		 *	Definicion de Dispositivo
+		 *	Resuelve restriccion de Dispositivo
 		 */
 		$Dispositivo=Dispositivo::findOne($request->post("disp_id"));
 		if($Dispositivo!==null)
 		{
-			if($Dispositivo->permission)
+			if(!$Dispositivo->permission)
 			{
-
+				throw new \yii\web\HttpException(401, 'Dispositivo no habilitado.');
 			}
+		}
+		else
+		{
+			throw new \yii\web\HttpException(404, 'No Existe el dispositivo.');
 		}
 		/*
 		 * Verificacion de Respuestas
 		 */
 
-		$Prev_Respuestas=Dispositivo::findOne($request->post("respuestas"));
-		$Respuestas=array();
-		$valid=true;
-		if($Prev_Respuestas!==null)
+		$respuestas=$request->post('respuestas',null);
+		if($respuestas!==null)
 		{
-			foreach ($Prev_Respuestas as $a) 
-			{
-				$alt=RvAlternativa::find()
-					->where(['alternativa'=>$a['alternativa']])
-					->andWhere(['pre_id'=>$a['pregunta']])
-					->One();
-				if($alt!==null)
-				{
-					http_response_code(422);
-					echo "Faltan pregunta por definir :";
-					var_dump($alt['alternativa'],$alt['pregunta']);
-					exit;
-				}
-				$respuesta=new RvRespuesta();
-				$respuesta->alt_id=$alt->primaryKey;
-				$respuesta->creado=$a['creacion'];
-				$valid=$model->validate()&&$valid;
-				$Respuestas[]=$respuesta;
+			if(RvAlternativa::find()->where(['IN','alt_id',array_column($respuestas,'alt_id')])->count()!=count($respuestas)){
+				throw new \yii\web\HttpException(404, 'La evaluacion no tiene respuestas validas.'.RvAlternativa::find()->where(['IN','alt_id',array_column($respuestas,'alt_id')])->count().count($respuestas));
 			}
 		}
-		return $Dispositivo;
+		else
+		{
+			throw new \yii\web\HttpException(404, 'La evaluacion no tiene respuestas.');
+		}
+		/*
+		 * Creacion de Evaluación y respuestas
+		 */
+		$ficha=new RvFicha();
+		$ficha->Attributes=$request->post();
+		if($ficha->save())
+		{
+			$respuestas_save=array();
+			foreach ($respuestas as $r) 
+			{
+				$respuesta=new RvRespuesta();
+				$respuesta->Attributes=$r;
+				$respuesta->fic_id=$ficha->primaryKey;
+				if($respuesta->save())
+				{
+					$respuestas_save[]=$respuesta;
+				}
+				else
+				{
+					return $respuesta;
+				}
+			}
+			$response=$ficha->getAttributes();
+			$response['respuestas']=$respuestas_save;
+			return $response;
+		}
+		else
+		{
+			return $ficha;
+		}
 	}
 
 	public function actionSearch()

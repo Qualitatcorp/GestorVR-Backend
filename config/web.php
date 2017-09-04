@@ -64,7 +64,6 @@ $config = [
                         'v1/licenciaregistro',
                         'v1/licenciatipo',
                         'v1/pais',
-                        'v1/rvficha',
                         'v1/rvalternativa',
                         'v1/rvevaluacion',
                         'v1/rvficharecursos',
@@ -89,6 +88,18 @@ $config = [
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/rvficha',
+                    ],
+                    'extraPatterns' => [
+                        'GET search' => 'search',
+                        'evaluacion' => 'evaluation',
+                        // 'POST changepassword'=>'changepassword'
                     ],
                     'pluralize' => false,
                 ],

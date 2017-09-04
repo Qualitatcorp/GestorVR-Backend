@@ -94,6 +94,6 @@ class Dispositivo extends \yii\db\ActiveRecord
 
     public function getPermission()
     {
-        return $this->habilitado=="SI"&&$this->activado="SI";
+        return $this->habilitado==="SI"&&$this->activado==="SI";
     }
 }

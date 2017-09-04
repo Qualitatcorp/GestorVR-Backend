@@ -44,9 +44,21 @@ class RvFicha extends \yii\db\ActiveRecord
             [['pro_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvProyecto::className(), 'targetAttribute' => ['pro_id' => 'pro_id']],
             [['disp_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dispositivo::className(), 'targetAttribute' => ['disp_id' => 'dis_id']],
             [['pais_id'], 'exist', 'skipOnError' => true, 'targetClass' => Pais::className(), 'targetAttribute' => ['pais_id' => 'pais_id']],
+            ['disp_id','verifyDispositivo']
         ];
     }
 
+    public function verifyDispositivo($attribute, $params)
+    {
+        $dis=$this->dispositivo;
+        if($dis!==null)
+        {
+            if(!$dis->permission)
+            {
+                $this->addError($attribute,'El dispositivo, no se encuentra habilitado');
+            }
+        }
+    }
 
     public function attributeLabels()
     {
