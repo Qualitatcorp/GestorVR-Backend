@@ -1,6 +1,5 @@
 <?php 
-$logo = \Yii::getAlias('@webroot').'/img/logo.png' ;
-$aprobado = \Yii::getAlias('@webroot').'/img/aprobado.png' ;
+$logo = '/images/logo.png'  ;
 function upper($string){
 	return strtoupper($string);
 }
@@ -112,7 +111,7 @@ switch ($mes) {
  
 ?>
 <body>
-	<img src="<?=$logo ?>" style="margin-left: 220; width: 200px">
+<img src="<?=$logo ?>" style="margin-left: 220; width: 200px">
 	<div class="container">
 		<h4 class = "margin-top-30 underline margin-left-20 "  > INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD</h4>
 		<div  >
@@ -122,7 +121,7 @@ switch ($mes) {
 			<br>
 			EMPRESA: <?= upper($trabajador->gerencia) ?>
 			<br>
-			FECHA ACREDITACIÓN: <?= $dia .' '.$mes . ' '. $anio?>
+			FECHA EVALUACIÓN: <?= $dia .' '.$mes . ' '. $anio?>
 		</div> 
 		<!-- aprobado -->
 		<div  class = "margin-top-15">
