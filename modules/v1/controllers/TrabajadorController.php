@@ -62,7 +62,15 @@ class TrabajadorController extends ActiveController
 
 	public function actionIdentity()
 	{
-		$post=\Yii::$app->request->post();
+		$request=\Yii::$app->request;
+		$post=$request->post();
+		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
+		if($model!==null)
+		{
+			$model->Attributes=$post;
+			$model->save();
+			return $model;
+		}
 		$model=$this->modelClass::findOne($post);
 		if($model===null)
 		{
