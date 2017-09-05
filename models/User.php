@@ -41,15 +41,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
     public static function findIdentityByAccessToken($token,$type = null)
     {
-        // $auth=Authentication::findActive()->andWhere(['token'=>$token])->one();
-        // if(!empty($auth)){
-        //     return $auth->user;
-        // }
-        // return null;
-        
-
-        return static::find()->
-        joinWith('authentications')
+        return static::find()
+            ->joinWith('authentications')
             ->andWhere(['status'=>'ALLOW'])
             ->andWhere(['token'=>$token])
             ->andWhere(['>','expire',time()])
