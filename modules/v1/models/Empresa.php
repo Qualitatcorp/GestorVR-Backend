@@ -66,6 +66,20 @@ class Empresa extends \yii\db\ActiveRecord
         ];
     }
 
+    public function extraFields()
+    {
+        return [
+            'dispositivos',
+            'users',
+            'usuarios',
+            'fichas',
+            'trabajadores',
+            'paises',
+            'proyectos',
+            'evaluaciones'
+        ];
+    }
+
     public function getDispositivos()
     {
         return $this->hasMany(Dispositivo::className(), ['emp_id' => 'emp_id']);
@@ -94,5 +108,30 @@ class Empresa extends \yii\db\ActiveRecord
     public function getLicencias()
     {
         return $this->hasMany(Licencia::className(), ['emp_id' => 'emp_id']);
+    }
+
+    public function getFichas()
+    {
+        return $this->hasMany(RvFicha::className(),['disp_id'=>'dis_id'])->via('dispositivos');
+    }
+
+    public function getTrabajadores()
+    {
+        return $this->hasMany(Trabajador::className(),['tra_id'=>'trab_id'])->via('fichas');
+    }
+
+    public function getPaises()
+    {
+        return $this->hasMany(Pais::className(),['pais_id'=>'pais_id'])->via('fichas');
+    }
+
+    public function getProyectos()
+    {
+        return $this->hasMany(RvProyecto::className(),['pro_id'=>'pro_id'])->via('fichas');
+    }
+
+    public function getEvaluaciones()
+    {
+        return $this->hasMany(RvEvaluacion::className(),['eva_id'=>'eva_id'])->via('fichas');
     }
 }

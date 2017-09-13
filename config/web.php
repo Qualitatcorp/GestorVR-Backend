@@ -14,8 +14,7 @@ $config = [
             'cookieValidationKey' => 'yC8juG2gpIhV7Rmlx14cPgy3WdB6u4kX',
             'enableCsrfCookie'=>false,
             'enableCsrfValidation' => false,
-            'enableCookieValidation'=>false,
-
+            'enableCookieValidation'=>false,            
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
@@ -53,7 +52,6 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'POST authentication/<action:\w+>' => 'authentication/<action>',
-
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
@@ -153,7 +151,8 @@ $config = [
                         'v1/empresa',
                     ],
                     'extraPatterns' => [
-                        'POST identity' => 'identity',
+                        'GET identity' => 'viewidentity',
+                        'POST identity' => 'findidentity',
                         'GET search' => 'search',
                         'GET <action:(ficha|trabajador)>'=>'index<action>',
                         'GET <action:(ficha|trabajador)>/<id:\d+>'=>'view<action>',
@@ -165,6 +164,8 @@ $config = [
               
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
+                
+                'GET report/empresa/ficha/<id:\d+>' => 'report/empresa/ficha',
                'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>',
             ],
         ],
@@ -186,7 +187,7 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1','201.215.22.66'],
     ];
 
     $config['bootstrap'][] = 'gii';

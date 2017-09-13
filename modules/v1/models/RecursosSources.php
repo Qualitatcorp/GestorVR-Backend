@@ -71,7 +71,11 @@ class RecursosSources extends \yii\db\ActiveRecord
         if($this->file!==null){
             $this->title = $this->file->baseName.'.'.$this->file->extension;
             $this->type =  $this->file->type;
-            $this->src = \Yii::$app->security->generateRandomString().'.'.$this->file->extension;
+            if($this->isNewRecord){
+                do {
+                    $this->src = \Yii::$app->security->generateRandomString().'.'.$this->file->extension;
+                } while ($this->exists);
+            }
             // var_dump($this->file->size);
             // exit;
         }
@@ -82,7 +86,7 @@ class RecursosSources extends \yii\db\ActiveRecord
     {
         if(!$this->hasErrors()&&$this->file!==null)
         {
-            $this->file->saveAs(Yii::$app->params['baseDirFront'].DIRECTORY_SEPARATOR.$this->src);
+            $this->file->saveAs($this->dir);
         } 
     }
 

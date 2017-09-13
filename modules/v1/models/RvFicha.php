@@ -137,6 +137,11 @@ class RvFicha extends \yii\db\ActiveRecord
         return $this->hasMany(RecursosSources::className(), ['id' => 'src_id'])->via('recursos');
     }
 
+    public function getPhoto()
+    {
+        return $this->getRecursos()->andWhere(['tipo'=>'PERFIL']);
+    }
+
     public function getCeim()
     {
         // Modificacion Especial para evaluaciones en el sistema
