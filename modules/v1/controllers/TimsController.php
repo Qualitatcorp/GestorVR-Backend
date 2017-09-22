@@ -76,7 +76,11 @@ class TimsController extends  Controller
 						$params->type = 'json';
 						$params->content =  $result;
 						$params->save();
-						return $params->content;
+						
+						$result = json_decode($params->content); 
+	                    $result  = $result->PcaLink;
+	                    $result = array('PcaLink' => $result);
+	                    return  $result ;
 					}else{
 						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
 					}
