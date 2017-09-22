@@ -5,17 +5,17 @@ use yii\web\Controller;
 
 class CeimController extends Controller
 {
-    // public function behaviors()
-    // {
-    //     return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
-    //         'authenticator'=>[
-    //             'class' => \yii\filters\auth\HttpBearerAuth::className()  
-    //         ],
-    //         'authorization'=>[
-    //             'class' => \app\components\Authorization::className(),
-    //         ],
-    //     ]);
-    // }
+    public function behaviors()
+    {
+        return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
+            'authenticator'=>[
+                'class' => \yii\filters\auth\HttpBearerAuth::className()  
+            ],
+            'authorization'=>[
+                'class' => \app\components\Authorization::className(),
+            ],
+        ]);
+    }
 
     public function actionSeguridad($id)
     {   
