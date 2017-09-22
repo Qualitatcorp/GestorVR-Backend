@@ -180,9 +180,9 @@ class TimsController extends  Controller
     } 
     private function  getFile($file){ // toma el archivo y lo descarga
     	//podemos reservar el nombre en la base de datos
-    	$pre_file = 'eval_sicologica_';
-    	$ext_file = '.pdf';
-    	$server_name = $this->exist(uniqid(),$ext_file);
+    	 
+    	
+    	$server_name = $this->exist();
     	$cl = curl_init($file); 
     	$fp = fopen($server_name, "w"); 
     	curl_setopt($cl, CURLOPT_FILE, $fp); 
@@ -192,11 +192,13 @@ class TimsController extends  Controller
     	fclose($fp); 
     	return $server_name;
     }
-    private function  exist($nombre_fichero,$ext_file){	 //asigna un nombre al archivo que se ecuentre disponible
-    	if (file_exists($nombre_fichero.$ext_file)) {
-    		$this->exist(uniqid(),$ext_file);
+    private function  exist(){	 //asigna un nombre al archivo que se ecuentre disponible
+
+    	$server_name = '\/src/'.uniqid().'.pdf';
+    	if (file_exists($server_name)) {
+    		$this->exist();
     	} else {
-    		return  $nombre_fichero.$ext_file;
+    		return  $server_name ;
     	}
     }
 }
