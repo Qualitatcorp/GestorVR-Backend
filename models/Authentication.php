@@ -37,8 +37,20 @@ class Authentication extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function findActive(){
-        return static::find()->where(['>','expire',time()]);
+    public static function findActive()
+    {
+        return static::find()
+            ->andWhere(['>','expire',time()])
+            ->andWhere(["status"=>"ALLOW"]);
+    }
+
+    public static function UpdateHistory()
+    {
+       Yii::$app->db
+            ->createCommand('call sp_access_update_history(:time)')
+            ->bindValue(":time",time())
+            ->noCache()
+            ->execute();
     }
 
     public function Renovate($timeOut=3600){

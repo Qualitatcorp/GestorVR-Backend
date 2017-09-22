@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class AnalitycsbitacoraeventoController extends ActiveController
+class RecursossourcesController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\AnalitycsBitacoraEvento';
+	public $modelClass = 'app\modules\v1\models\RecursosSources';
 
 	public function behaviors()
 	{
@@ -18,6 +18,56 @@ class AnalitycsbitacoraeventoController extends ActiveController
 				'class' => \app\components\Authorization::className(),
 			],
 		]);
+	}
+
+	public function actionFileview($id)
+	{
+		$model=$this->modelClass::findOne($id);
+		// return $model;
+		if($model!==null)
+		{
+			if($model->exists)
+			// if(file_exists($model->dir))
+			{
+				header("Content-type: ".$model->mimeType);
+				header("Content-Disposition: inline");
+				header("Content-Length: ".$model->size);
+				// $file=file_get_contents($model->dir);
+		    	// echo $file;
+				readfile($model->dir);
+				exit;
+			}else
+			{
+				throw new \yii\web\HttpException(404, "El recurso no se encuentra disponible.");
+			}
+		}else
+		{
+			throw new \yii\web\HttpException(404, "El recurso no existe.");
+		}
+	}
+
+	public function actionFiledownload($id)
+	{
+		$model=$this->modelClass::findOne($id);
+		// return $model;
+		if($model!==null)
+		{
+			if($model->exists)
+			{
+				header("Content-type: ".$model->mimeType);
+				header("Content-Disposition: attachment; filename=\"$model->title\"");
+				header("Content-Length: ".$model->size);
+		    	// echo $file;
+				readfile($model->dir);
+				exit;
+			}else
+			{
+				throw new \yii\web\HttpException(404, "El recurso no se encuentra disponible.");
+			}
+		}else
+		{
+			throw new \yii\web\HttpException(404, "El recurso no existe.");
+		}
 	}
 
 	public function actionSearch()

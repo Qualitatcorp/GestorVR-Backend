@@ -26,10 +26,12 @@ class CeimController extends Controller
        
         if(!empty($ficha) ){
             $head = $this->renderPartial('reporte/_head',array('ficha'=>$ficha),true);
-            $style =  file_get_contents( './css/ceim.css');
+            $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/ceim.css');
             $mpdf = new \mPDF();
- 
+            // $mpdf->debug = true; 
             $mpdf->charset_in = 'utf-8';
+
+            $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$id);
             $mpdf->WriteHTML($style,1);
             $mpdf->WriteHTML($head);
             $mpdf->Output('ceim-'.$id.'pdf','I');

@@ -20,11 +20,24 @@ class DispositivotipoController extends ActiveController
 		]);
 	}
 
+	public function actionIdentity()
+	{
+		$post=\Yii::$app->request->post();
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
+			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
+		}
+		return $model;
+	}
+
 	public function actionSearch()
 	{
 		if (!empty($_GET)) {
 			$request=\Yii::$app->request;
-			$reserve=['per-page','sort','page','expand'];
+			$reserve=['per-page','sort','page','expand','expand','fields'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {

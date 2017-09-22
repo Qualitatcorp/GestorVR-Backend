@@ -24,7 +24,7 @@ class TrabajadorController extends ActiveController
 	{
 		if (!empty($_GET)) {
 			$request=\Yii::$app->request;
-			$reserve=['per-page','sort','page','expand'];
+			$reserve=['per-page','sort','page','expand','expand','fields'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
@@ -59,15 +59,25 @@ class TrabajadorController extends ActiveController
 		}
 	}
 
+
 	public function actionIdentity()
 	{
 		$request=\Yii::$app->request;
+		$post=$request->post();
 		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
-		if($model===null){
-			$model=new $this->modelClass();
+		if($model!==null)
+		{
+			$model->Attributes=$post;
+			$model->save();
+			return $model;
 		}
-		$model->attributes=$request->post();
-		$model->save();
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
+			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
+		}
 		return $model;
 	}
 }

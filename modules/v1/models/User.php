@@ -48,7 +48,7 @@ class User extends \yii\db\ActiveRecord
     public function fields()
     {
         $fields = parent::fields();
-        unset($fields['password'], $fields['estado'], $fields['tipo']);
+        unset($fields['password']);
         return $fields;
     }
 

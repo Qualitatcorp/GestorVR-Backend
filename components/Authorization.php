@@ -22,7 +22,7 @@ class Authorization extends ActionFilter
 		}
 		public static function CheckAccess($user_id=null,$resource=null)
 		{
-			return true;
+			// return true;
 			
 			if(empty($resource)){
 				if(empty($user_id)){
