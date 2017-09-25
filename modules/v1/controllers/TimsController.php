@@ -58,7 +58,8 @@ class TimsController extends  Controller
 					if(gettype($result) === 'object'){// verificar que se devuelva la informacion correpondiente
 						//  Al inscribir retorna  dos codigos
 						$params = array( //seteamos un array que sera nuestro objeto en params
-							'id' =>$ficha->fic_id,
+							'fic_id'=>$ficha->fic_id,
+							'id' =>$result->PcaCod,
 							'pdf' => null,
 							'nota'=>null,
 							'url' =>$result->PcaLink, 

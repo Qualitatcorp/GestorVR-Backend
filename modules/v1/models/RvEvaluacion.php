@@ -26,17 +26,11 @@ use Yii;
  */
 class RvEvaluacion extends \yii\db\ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
     public static function tableName()
     {
         return 'rv_evaluacion';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
@@ -49,9 +43,6 @@ class RvEvaluacion extends \yii\db\ActiveRecord
     }
 
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
@@ -67,11 +58,15 @@ class RvEvaluacion extends \yii\db\ActiveRecord
         ];
     }
 
+    public function extraFields()
+    {
+        return ['preguntas','alternativas'];
+    }
+
     public function getClientEvaluacions()
     {
         return $this->hasMany(RvClientEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
-
    
     public function getClients()
     {
@@ -87,19 +82,18 @@ class RvEvaluacion extends \yii\db\ActiveRecord
         return $this->hasMany(RvFicha::className(), ['eva_id' => 'eva_id']);
     }
 
-    public function getIntEvaluacions()
+    public function getInternacional()
     {
         return $this->hasMany(RvIntEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
  
-     public function getPreguntas()
+    public function getPreguntas()
     {
         return $this->hasMany(RvPregunta::className(), ['eva_id' => 'eva_id']);
     }
- 
-
- 
-
-   
- 
+    
+    public function getAlternativas()
+    {
+        return $this->hasMany(RvAlternativa::className(),['pre_id'=>'pre_id'])->via('preguntas');
+    }
 }
