@@ -68,6 +68,12 @@ $config = [
                         'v1/rvitem',
                         'v1/rvpregunta',
                         'v1/rvrespuesta',
+                        'v1/rvclient',
+                        'v1/rvclientcalificacion',
+                        'v1/rvclientevaluacion',
+                        'v1/rvclientrecursos',
+                        'v1/rvclienttipo',
+                        'v1/rvclientparams',
                         'v1/userauthentication',
                         'v1/userauthorization',
                         'v1/userclient',
@@ -76,6 +82,7 @@ $config = [
                         'v1/rvintalternativa',
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
+                        'v1/tims',
                         'v1/analitycsbitacora',
                         'v1/analitycsbitacoraempresa',
                         'v1/analitycsbitacoratrabajador',
@@ -167,6 +174,7 @@ $config = [
                 
                 'GET report/empresa/ficha/<id:\d+>' => 'report/empresa/ficha',
                'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>',
+               'GET v1/tims/estado/<id:\d+>' => 'v1/tims/estado'
             ],
         ],
 

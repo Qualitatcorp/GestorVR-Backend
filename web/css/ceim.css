@@ -14,17 +14,17 @@ p{
 }
 .aprobado{
  
-	background-image: url('images/aprobado.png');
+	background-image: url('./img/aprobado.png');
  
 }
 .recomendaciones{
 	 
-	background-image: url('images/recomendaciones.png');
+	background-image: url('./img/recomendaciones.png');
  
 }
 .noaprobado{
 	
-	background-image: url('images/noaprobado.png');
+	background-image: url('./img/noaprobado.png');
 
 }
 .porcentaje{
