@@ -19,8 +19,7 @@ class TimsController extends  Controller
 			],
 		]);
 	}
-	 
- 	
+		
     public function actionCreate()
 	{   //paramatro de entrada fic_id
 		$post = \Yii::$app->request->post();
