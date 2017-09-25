@@ -174,7 +174,7 @@ $config = [
                 
                 'GET report/empresa/ficha/<id:\d+>' => 'report/empresa/ficha',
                'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>',
-               'GET v1/tims/estado/<id:\d+>' => 'v1/tims/estado'
+               
             ],
         ],
 

@@ -72,6 +72,7 @@ class RvFicha extends \yii\db\ActiveRecord
             'calificacion' => 'Calificacion',
             'pais_id' => 'Pais ID',
             'creado' => 'Creado',
+            
         ];
     }
 
@@ -88,7 +89,8 @@ class RvFicha extends \yii\db\ActiveRecord
             'alternativas',
             'ceim',
             'recursos',
-            'src'
+            'src',
+            'reacreditacion'
         ];
     }
 
@@ -140,6 +142,19 @@ class RvFicha extends \yii\db\ActiveRecord
     public function getPhoto()
     {
         return $this->getRecursos()->andWhere(['tipo'=>'PERFIL']);
+    }
+    public function getReacreditacion(){
+        $query = new \yii\db\Query;
+        $query->select('min(creado) as creado')
+            ->from('rv_ficha')
+            ->where(['trab_id' =>  $this->trab_id, 'eva_id' => $this->eva_id ]);        
+        $command = $query->createCommand();
+        $rows = $command->queryAll();
+        if($rows[0]['creado'] == $this->creado){
+            return false;
+        }else{
+            return true;
+        }      
     }
 
     public function getCeim()
@@ -397,4 +412,5 @@ class RvFicha extends \yii\db\ActiveRecord
             ]
         ];
     }
+
 }
