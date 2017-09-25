@@ -19,8 +19,6 @@ class TimsController extends  Controller
 			],
 		]);
 	}
-	 
- 	
     public function actionCreate()
 	{   //paramatro de entrada fic_id
 		$post = \Yii::$app->request->post();
@@ -105,8 +103,6 @@ class TimsController extends  Controller
 				return $result;   	
 			  }else{ //Aca actualiza el codigo desde la db
 		  	    $result = json_decode($ClientParam->content);
-
-
 		  		$fields = array(
 		  			// 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
 				    'PcaCod'=> $result->PcaCod,
@@ -114,8 +110,6 @@ class TimsController extends  Controller
 					'RepCod'=> "qua",
 				);
 				$curl_result = $this->curl_post($fields,$urlResult);  //obtenemos los datos de la consulta via post
-			 
-
 				if(gettype($curl_result) === 'object'){
 					$params = array( //seteamos un array que sera nuestro objeto en params
 					'id' =>$curl_result->PerIde,
@@ -138,19 +132,13 @@ class TimsController extends  Controller
 				}else{//evaluacion no fialiada
 					throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 				}
-
-			  	return  'actualizar';
 			  }
 
 		}else{ //en caso de no existir $ClienteParam
-			return 'no existe';
+			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 		}
 
 	}
-
- 
- 
- 
 	private function curl_post($fields,$url){ //codigo que curl que crea la comunicacion via post
     	$postvars='';
 		$sep='';
@@ -184,6 +172,7 @@ class TimsController extends  Controller
     } 
     private function  getFile($file){ // toma el archivo y lo descarga
     	//podemos reservar el nombre en la base de datos
+    	$pat = /Yii::$app->params['baseUrlFront']
     	 
     	
     	$server_name = $this->exist();
