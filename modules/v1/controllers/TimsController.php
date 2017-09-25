@@ -19,18 +19,10 @@ class TimsController extends  Controller
 			],
 		]);
 	}
-	public function actions()
-	{
-	    $actions = parent::actions();
-
-	    // disable the "delete" and "create" actions
-	    unset($actions['create']);
-	    return $actions;
-	}
+	 
  	
     public function actionCreate()
-	{
-		 //paramatro de entrada fic_id
+	{   //paramatro de entrada fic_id
 		$post = \Yii::$app->request->post();
 		if(isset( $post['fic_id']) ){ // fic 17543
 			$id = $post['fic_id'];
@@ -39,7 +31,6 @@ class TimsController extends  Controller
 			if($ficha){
 				$tra = $ficha->trabajador;
 				$sexo = $tra->sexo;
-
 				switch ($sexo) { // que hacer en caso de que el sexo no se encuentre registrado
 					case 'MASCULINO':
 					$sexoL = 'M';
@@ -61,29 +52,34 @@ class TimsController extends  Controller
 					'CoRegCod'=> "es-cl",
 					'PcaTip'=> "D"
 				);
-				$params = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
-				if(!$params){//si no existe registramos una nueva
+				$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
+				if(!$ClientParam){//si no existe registramos una nueva
 					$result = $this->curl_post($fields,$urlInscripcion);
 					if(gettype($result) === 'object'){// verificar que se devuelva la informacion correpondiente
-						$result = json_encode($result);
-						$params = new RvClientParams;		
-						$params->fic_id = $id;
-						$params->cli_eva_id = '1';
-						$params->type = 'json';
-						$params->content =  $result;
-						$params->save();
-						$result = json_decode($params->content); 
-	                    $result = $result->PcaLink;
-	                    $result = array('PcaLink' => $result);
+						//  Al inscribir retorna  dos codigos
+						$params = array( //seteamos un array que sera nuestro objeto en params
+							'id' =>$ficha->fic_id,
+							'pdf' => null,
+							'nota'=>null,
+							'url' =>$result->PcaLink, 
+							'PcaCod' =>$result->PcaCod,  
+						);
+						$params = json_encode($params);
+						$ClientParam = new RvClientParams;		
+						$ClientParam->fic_id = $id;
+						$ClientParam->cli_eva_id = '1';
+						$ClientParam->type = 'json';
+						$ClientParam->content =  $params;
+						$ClientParam->save();
+						$result = json_decode($ClientParam->content); 
+	                    $result = array('id' => $result->id,'url' =>$result->url);
 	                    return  $result ;
 					}else{
 						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
 					}
 				}else{ // si existe la rescatamos
-					$result = $params->content;
-					$result = json_decode($result); 
-                    $result  = $result->PcaLink;
-                    $result = array('PcaLink' => $result);
+					$result = json_decode($ClientParam->content); 
+				    $result = array('id' => $result->id,'url' =>$result->url);
                     return  $result ;
 				}
 			}else{
@@ -94,56 +90,63 @@ class TimsController extends  Controller
 		}
    
 	}
-	public function actionEstado(){
-		 
+	public function actionView($id){
 		$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
-		$request = \Yii::$app->request;
-		$id = $request->get('id');
-		if(ctype_digit($id)){
-			$params = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
-			if($params){ //verificamos que exista
-				$result = json_decode($params->content); //convertimos los datos array
-				if(!array_key_exists('Jca', $result)) { //verificamos que no exista Jca en el array, eso significa que no se ha finalizado o actualizado los datos
+		$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
+		if($ClientParam){ //verificamos que exista
+			  $result = json_decode($ClientParam->content); //convertimos los datos array
+			  if($result->nota and $result->nota ){ // si existe nota, eval finalizada y actualizada
+			  	$result = json_decode($ClientParam->content);
+				$result = array(
+					'id' => $result->id,
+					'pdf' =>  $result->pdf,
+					'nota' => $result->nota ,
+				);
+				return $result;   	
+			  }else{ //Aca actualiza el codigo desde la db
+		  	    $result = json_decode($ClientParam->content);
 
-					$fields = array('PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
-					//'PcaCod'=> $result->PcaCod,
+
+		  		$fields = array(//'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
+				    'PcaCod'=> $result->PcaCod,
 					'JcaCods'=> 'f727b6d9-1f65-4daf-9783-44efe154b4db',
 					'RepCod'=> "qua",
+				);
+				$curl_result = $this->curl_post($fields,$urlResult);  //obtenemos los datos de la consulta via post
+			 
+
+				if(gettype($curl_result) === 'object'){
+					$params = array( //seteamos un array que sera nuestro objeto en params
+					'id' =>$curl_result->PerIde,
+					'pdf' => $curl_result->Jca[0]->RepLink,
+					'nota'=> $curl_result->Jca[0]->PjeCom,
+					'url' => $result->url, 
+					'PcaCod' =>$result->PcaCod,  
 					);
-					$result = $this->curl_post($fields,$urlResult);  //obtenemos los datos de la consulta via post
-					
-					if(gettype($result) === 'object'){
-						$params->content = json_encode($result); //codificamos los datos a json y lo setiamos
+					$params  = json_encode($params); //codificamos los datos a json y lo setiamos
+					$ClientParam->content = $params;
+					if (!$ClientParam->update()) {    //guardamos en la db, si ocurre algun error, lo mostramos	  				 
+						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
+					}
+					else{
+						return $params;
+						//definir la carpeta donde se guardaran los pdf
+						//$nombre_server =  $this->existInExternalServer($result->Jca[0]->RepLink); //rescatamos el archivo desde el  
+					}
 
-				    	if (!$params->update()) {    //guardamos en la db, si ocurre algun error, lo mostramos	  				 
-   	  						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
-						}else{
-							//definir la carpeta donde se guardaran los pdf
-							$nombre_server =  $this->existInExternalServer($result->Jca[0]->RepLink); //rescatamos el archivo desde el  
-						}
-						// $result->PerIde; 
-						// $result->PerNom;
-						// $result->Jca[0]->JcaDes;
-						// $result->Jca[0]->PjeCom;
-						// $result->Jca[0]->RepLink;
-						
-					}else{
-						return "eval no finalizada";
-					} 
-				}else{
-
-					return 'los datos se encuentran registrados';
+				}else{//evaluacion no fialiada
+					throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 				}
-			}
-			        
-          	
-		}else{
-			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+
+			  	return  'actualizar';
+			  }
+
+		}else{ //en caso de no existir $ClienteParam
+			return 'no existe';
 		}
-        
-		 
+
 	}
- 
+
  
  
  
@@ -184,7 +187,7 @@ class TimsController extends  Controller
     	
     	$server_name = $this->exist();
     	$cl = curl_init($file); 
-    	$fp = fopen($server_name, "w"); 
+    	$fp = fopen($server_name, "w", include_path); 
     	curl_setopt($cl, CURLOPT_FILE, $fp); 
     	curl_setopt($cl, CURLOPT_HEADER, 0); 
     	curl_exec($cl); 
@@ -194,8 +197,8 @@ class TimsController extends  Controller
     }
     private function  exist(){	 //asigna un nombre al archivo que se ecuentre disponible
 
-    	$server_name = '\/src/'.uniqid().'.pdf';
-    	if (file_exists($server_name)) {
+    	$server_name = uniqid().'.pdf';
+    	if (file_exists($server_name)) { // verificar la ruta
     		$this->exist();
     	} else {
     		return  $server_name ;
