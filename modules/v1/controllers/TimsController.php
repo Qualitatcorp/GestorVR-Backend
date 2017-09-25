@@ -107,7 +107,8 @@ class TimsController extends  Controller
 		  	    $result = json_decode($ClientParam->content);
 
 
-		  		$fields = array(//'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
+		  		$fields = array(
+		  			// 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
 				    'PcaCod'=> $result->PcaCod,
 					'JcaCods'=> 'f727b6d9-1f65-4daf-9783-44efe154b4db',
 					'RepCod'=> "qua",
@@ -123,8 +124,8 @@ class TimsController extends  Controller
 					'url' => $result->url, 
 					'PcaCod' =>$result->PcaCod,  
 					);
-					$params  = json_encode($params); //codificamos los datos a json y lo setiamos
-					$ClientParam->content = $params;
+					// $params  = json_encode($params); //codificamos los datos a json y lo setiamos
+					$ClientParam->content = json_encode($params);
 					if (!$ClientParam->update()) {    //guardamos en la db, si ocurre algun error, lo mostramos	  				 
 						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
 					}
