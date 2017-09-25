@@ -63,7 +63,7 @@ class RvClientParams extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFic()
+    public function getFicha()
     {
         return $this->hasOne(RvFicha::className(), ['fic_id' => 'fic_id']);
     }
