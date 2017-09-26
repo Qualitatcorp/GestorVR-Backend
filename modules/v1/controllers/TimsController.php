@@ -5,6 +5,7 @@ namespace app\modules\v1\controllers;
 use yii\rest\Controller;
 use app\modules\v1\models\RvFicha;
 use app\modules\v1\models\RvClientParams;
+use app\modules\v1\models\RvClientCalificacion;
 
 class TimsController extends  Controller
 {
@@ -89,23 +90,26 @@ class TimsController extends  Controller
    
 	}
 	public function actionView($id){
+		
+
 		$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
 		$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
 		if($ClientParam){ //verificamos que exista
-			  $result = json_decode($ClientParam->content); //convertimos los datos array
-			  if($result->nota and $result->nota ){ // si existe nota, eval finalizada y actualizada
+			  $results = json_decode($ClientParam->content); //convertimos los datos array
+			  if($results->nota and $results->pdf ){ // si existe nota, eval finalizada y actualizada
 			  	$result = json_decode($ClientParam->content);
 				$result = array(
 					'id' => $result->id,
 					'pdf' =>  $result->pdf,
 					'nota' => $result->nota ,
 				);
+				
 				return $result;   	
 			  }else{ //Aca actualiza el codigo desde la db
 		  	    $result = json_decode($ClientParam->content);
 		  		$fields = array(
-		  			// 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
-				    'PcaCod'=> $result->PcaCod,
+		  			 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
+				    //'PcaCod'=> $result->PcaCod,
 					'JcaCods'=> 'f727b6d9-1f65-4daf-9783-44efe154b4db',
 					'RepCod'=> "qua",
 				);
@@ -124,10 +128,29 @@ class TimsController extends  Controller
 						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
 					}
 					else{
+						$calificacion = RvClientCalificacion::find()->andWhere(["fic_id" => $id])->one();
+						if(!$calificacion){
+						 	$calificacion = new  RvClientCalificacion; //guardamos la nota
+							$calificacion->fic_id = $id;
+							$calificacion->cli_eva_id = 1 ;
+							$calificacion->calificacion =  intval($curl_result->Jca[0]->PjeCom)/100;
+							$calificacion->save();
+						}
+						
+						 
 						return $params;
 						//definir la carpeta donde se guardaran los pdf
 						//$nombre_server =  $this->existInExternalServer($result->Jca[0]->RepLink); //rescatamos el archivo desde el  
 					}
+
+					
+					 	
+ 
+
+
+ 
+
+
 
 				}else{//evaluacion no fialiada
 					throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
@@ -172,7 +195,7 @@ class TimsController extends  Controller
     } 
     private function  getFile($file){ // toma el archivo y lo descarga
     	//podemos reservar el nombre en la base de datos
-    	$pat = /Yii::$app->params['baseUrlFront']
+    	//$pat = /Yii::$app->params['baseUrlFront']
     	 
     	
     	$server_name = $this->exist();

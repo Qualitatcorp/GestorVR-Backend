@@ -90,7 +90,8 @@ class RvFicha extends \yii\db\ActiveRecord
             'ceim',
             'recursos',
             'src',
-            'reacreditacion'
+            'reacreditacion',
+            'notas'
         ];
     }
 
@@ -156,7 +157,10 @@ class RvFicha extends \yii\db\ActiveRecord
             return true;
         }      
     }
+    public function getNotas(){
+            return 1;
 
+    }
     public function getCeim()
     {
         // Modificacion Especial para evaluaciones en el sistema
