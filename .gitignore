@@ -32,3 +32,5 @@ config/db.php
 *.css
 *.pdf
 *.pdf
+config/params.php
+config/params.php
