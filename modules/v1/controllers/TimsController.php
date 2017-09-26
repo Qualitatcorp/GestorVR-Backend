@@ -19,7 +19,7 @@ class TimsController extends  Controller
 			],
 		]);
 	}
-		
+
     public function actionCreate()
 	{   //paramatro de entrada fic_id
 		$post = \Yii::$app->request->post();
@@ -79,7 +79,12 @@ class TimsController extends  Controller
 					}
 				}else{ // si existe la rescatamos
 					$result = json_decode($ClientParam->content); 
-				    $result = array('id' => $result->id,'url' =>$result->url);
+				    $result = array(
+				    	'id' => $result->id,
+				    	'url' =>$result->url,
+				    	'pdf'=>$result->pdf,
+				    	'nota'=>$result->nota
+				    );
                     return  $result ;
 				}
 			}else{
