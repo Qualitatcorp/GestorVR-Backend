@@ -7,14 +7,18 @@ use Yii;
 /**
  * This is the model class for table "rv_evaluacion".
  *
- * @property string $eva_id
- * @property integer $tev_id
- * @property string $nombre
- * @property string $descripcion
- * @property string $orden
- * @property string $creado
- * @property string $habilitado
+ * @property string $eva_id 
+ * @property integer $tev_id 
+ * @property string $nombre 
+ * @property string $descripcion 
+ * @property string $nota '' //nuevo
+ * @property string $orden 
+ * @property string $reporte '' //nuevo
+ * @property string $creado 
+ * @property string $habilitado 
  *
+ * @property RvClientEvaluacion[] $rvClientEvaluacions
+ * @property RvClientTipo[] $clits
  * @property RvTipo $tev
  * @property RvFicha[] $rvFichas
  * @property RvIntEvaluacion[] $rvIntEvaluacions
@@ -22,19 +26,17 @@ use Yii;
  */
 class RvEvaluacion extends \yii\db\ActiveRecord
 {
-
     public static function tableName()
     {
         return 'rv_evaluacion';
     }
-
 
     public function rules()
     {
         return [
             [['tev_id', 'nombre'], 'required'],
             [['tev_id'], 'integer'],
-            [['nombre', 'descripcion', 'orden', 'habilitado'], 'string'],
+            [['nombre', 'descripcion', 'nota', 'orden', 'reporte', 'habilitado'], 'string'],
             [['creado'], 'safe'],
             [['tev_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvTipo::className(), 'targetAttribute' => ['tev_id' => 'tev_id']],
         ];
@@ -44,33 +46,54 @@ class RvEvaluacion extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'eva_id' => 'Eva ID',
-            'tev_id' => 'Tev ID',
-            'nombre' => 'Nombre',
-            'descripcion' => 'Descripcion',
-            'orden' => 'Orden',
-            'creado' => 'Creado',
-            'habilitado' => 'Habilitado',
+            'eva_id' => Yii::t('app', 'Eva ID'),
+            'tev_id' => Yii::t('app', 'Tev ID'),
+            'nombre' => Yii::t('app', 'Nombre'),
+            'descripcion' => Yii::t('app', 'Descripcion'),
+            'nota' => Yii::t('app', 'Nota'),
+            'orden' => Yii::t('app', 'Orden'),
+            'reporte' => Yii::t('app', 'Reporte'),
+            'creado' => Yii::t('app', 'Creado'),
+            'habilitado' => Yii::t('app', 'Habilitado'),
         ];
+    }
+
+    public function extraFields()
+    {
+        return ['preguntas','alternativas'];
+    }
+
+    public function getClientEvaluacions()
+    {
+        return $this->hasMany(RvClientEvaluacion::className(), ['eva_id' => 'eva_id']);
+    }
+   
+    public function getClients()
+    {
+        return $this->hasMany(RvClientTipo::className(), ['id' => 'clit_id'])->viaTable('rv_client_evaluacion', ['eva_id' => 'eva_id']);
     }
 
     public function getTipo()
     {
         return $this->hasOne(RvTipo::className(), ['tev_id' => 'tev_id']);
-    }
-
+    } 
     public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['eva_id' => 'eva_id']);
     }
 
-    public function getIntEvaluacions()
+    public function getInternacional()
     {
         return $this->hasMany(RvIntEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
-
+ 
     public function getPreguntas()
     {
         return $this->hasMany(RvPregunta::className(), ['eva_id' => 'eva_id']);
+    }
+    
+    public function getAlternativas()
+    {
+        return $this->hasMany(RvAlternativa::className(),['pre_id'=>'pre_id'])->via('preguntas');
     }
 }

@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class TrabajadorController extends ActiveController
+class RvclienttipoController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\Trabajador';
+	public $modelClass = 'app\modules\v1\models\RvClientTipo';
 
 	public function behaviors()
 	{
@@ -20,32 +20,11 @@ class TrabajadorController extends ActiveController
 		]);
 	}
 
-	public function actionIdentity()
-	{
-		$request=\Yii::$app->request;
-		$post=$request->post();
-		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
-		if($model!==null)
-		{
-			$model->Attributes=$post;
-			$model->save();
-			return $model;
-		}
-		$model=$this->modelClass::findOne($post);
-		if($model===null)
-		{
-			$model=new $this->modelClass();
-			$model->attributes=$post;
-			$model->save();
-		}
-		return $model;
-	}
-
 	public function actionSearch()
 	{
 		if (!empty($_GET)) {
 			$request=\Yii::$app->request;
-			$reserve=['per-page','sort','page','expand','expand','fields'];
+			$reserve=['per-page','sort','page','expand'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
@@ -79,16 +58,4 @@ class TrabajadorController extends ActiveController
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
 	}
-
-	// public function actionIdentity()
-	// {
-	// 	$request=\Yii::$app->request;
-	// 	$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
-	// 	if($model===null){
-	// 		$model=new $this->modelClass();
-	// 	}
-	// 	$model->attributes=$request->post();
-	// 	$model->save();
-	// 	return $model;
-	// }
 }

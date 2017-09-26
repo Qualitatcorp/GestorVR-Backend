@@ -21,11 +21,30 @@ class EmpresaController extends ActiveController
 		]);
 	}
 
+	public function actionViewidentity(){
+		return $this->modelClass::find()
+				->joinWith('users')
+				->where('empresa_user.usu_id=:id',[':id'=>Yii::$app->user->identity->primaryKey])->One();
+	}
+
+	public function actionFindidentity()
+	{
+		$post=\Yii::$app->request->post();
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
+			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
+		}
+		return $model;
+	}
+
 	public function actionSearch()
 	{
 		if (!empty($_GET)) {
 			$request=Yii::$app->request;
-			$reserve=['page','index','order','limit'];
+			$reserve=['per-page','sort','page','expand','expand','fields'];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
 				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
@@ -45,23 +64,10 @@ class EmpresaController extends ActiveController
 						}
 					}
 				}
-				$id=($request->get('index'))?$request->get('index'):'id';
-				$sort=($request->get('order')=='asc')?SORT_ASC:SORT_DESC;
-				$provider = new \yii\data\ActiveDataProvider([
-					'query' => $query,
-					'sort' => [
-						'defaultOrder' => [
-							$id=>$sort
-						]
-					],
-				  	'pagination' => [
-						'defaultPageSize' => 20,'page'=>(isset($_GET['page']))?intval($_GET['page'])-1:0
-					],
-				]);
+				$provider = new \yii\data\ActiveDataProvider(['query' => $query]);
 			} catch (Exception $ex) {
 				throw new \yii\web\HttpException(500, 'Error interno del sistema.');
 			}
-
 			if ($provider->getCount() <= 0) {
 				throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 			} else {
@@ -72,31 +78,61 @@ class EmpresaController extends ActiveController
 		}
 	}
 
+
+/**
+ *
+ * Ficha de perteneciente a la emrpesa
+ *
+ */
+
 	public function actionIndexficha()
 	{
-		// $query =\app\modules\v1\models\RvFicha::find();
-		$query =\app\modules\v1\models\RvFicha::find()->joinWith('dispositivo.empresa.users')->where('empresa_user.id=:id',[':id'=>Yii::$app->user->identity->primaryKey]);
-		// return $query->createCommand()->rawSql;
-		$data = new \yii\data\ActiveDataProvider([
-			'query' => $query,
-			// 'sort' => [
-			// 	"attributes"=>[
-			// 		'-fic_id'
-			// 	]
-			// ],
-		  	'pagination' => [
-				'defaultPageSize' => (int)Yii::$app->request->get('perPage',20),
-				// 'page'=>(int)$request->get('page',0)
-			],
-		]);
-		return $data;
+		$request=Yii::$app->request;
+		$reserve=['per-page','sort','page','expand','expand','fields'];
+		$model = new \app\modules\v1\models\RvFicha;
+		foreach ($_GET as $key => $value) {
+			if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
+				throw new \yii\web\HttpException(404, 'Atributo invalido :' . $key);
+			}
+		}
+		try {
+		   	$query = $model->find()
+		   		->joinWith('dispositivo.empresa.users')
+		   		->where('empresa_user.usu_id=:id',[':id'=>Yii::$app->user->identity->primaryKey]);
+		   	$range=['id','trab_id'];
+			foreach ($_GET as $key => $value) {
+				if(!in_array($key,$reserve)){
+					if (in_array($key,$range)) {
+						$limit = explode('-',$value);
+						if(count($limit)===1){
+							$limit = explode(',',$value);
+							$query->andWhere(['in','trab_id',$limit]);
+						}else{
+							$query->andWhere(['between', 'trabajador.'.$key,$limit[0],$limit[1]]);
+						}
+					}else{
+						$query->andWhere(['like', 'trabajador.'.$key, $value]);
+					}
+				}
+			}
+
+			// return $query->createCommand()->rawSql;
+			$provider = new \yii\data\ActiveDataProvider(['query' => $query]);
+		} catch (Exception $ex) {
+			throw new \yii\web\HttpException(500, 'Error interno del sistema.');
+		}
+		if ($provider->getCount() <= 0) {
+			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+		} else {
+			return $provider;
+		}
 	}
 
 	public function actionViewficha($id)
 	{
 		$model = \app\modules\v1\models\RvFicha::find()
 			->joinWith('dispositivo.empresa.users')
-			->andWhere('empresa_user.id=:usu AND rv_ficha.fic_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id])
+			->andWhere('empresa_user.usu_id=:usu AND rv_ficha.fic_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id])
 			->one();
 			// ->createCommand()->rawSql;
 		if($model!==null){
@@ -106,26 +142,56 @@ class EmpresaController extends ActiveController
 		}
 	}
 
+/**
+ *
+ * Trabajador de la empresa asignada
+ *
+ */
+
 	public function actionIndextrabajador()
 	{
-		$query =\app\modules\v1\models\Trabajador::find()
-		->distinct()
-		->joinWith('fichas.dispositivo.empresa.users')
-		->where('empresa_user.id=:id',[':id'=>Yii::$app->user->identity->primaryKey]);
-		$data = new \yii\data\ActiveDataProvider([
-			'query' => $query,
-		  	'pagination' => [
-				'defaultPageSize' => (int)Yii::$app->request->get('perPage',20),
-			],
-		]);
-		return $data;
+		$request=Yii::$app->request;
+		$reserve=['per-page','sort','page','expand','expand','fields'];
+		$model = new \app\modules\v1\models\Trabajador;
+		foreach ($_GET as $key => $value) {
+			if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
+				throw new \yii\web\HttpException(404, 'Atributo invalido :' . $key);
+			}
+		}
+		try {
+		   	$query = $model->find()
+		   		->distinct()
+				->joinWith('fichas.dispositivo.empresa.users')
+				->where('empresa_user.usu_id=:id',[':id'=>Yii::$app->user->identity->primaryKey]);
+		   	$range=['id'];
+			foreach ($_GET as $key => $value) {
+				if(!in_array($key,$reserve)){
+					if (in_array($key,$range)) {
+						$limit = explode('-',$value);
+						$query->andWhere(['between', 'trabajador.'.$key,$limit[0],$limit[1]]);
+					}else{
+						$query->andWhere(['like', 'trabajador.'.$key, $value]);
+					}
+				}
+			}
+
+			// return $query->createCommand()->rawSql;
+			$provider = new \yii\data\ActiveDataProvider(['query' => $query]);
+		} catch (Exception $ex) {
+			throw new \yii\web\HttpException(500, 'Error interno del sistema.');
+		}
+		if ($provider->getCount() <= 0) {
+			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+		} else {
+			return $provider;
+		}
 	}
 
 
 
 	public function actionViewtrabajador($id)
 	{		
-		$model = \app\modules\v1\models\Trabajador::find()->distinct()->joinWith('fichas.dispositivo.empresa.users')->where('empresa_user.id=:usu AND trabajador.tra_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id])->one();
+		$model = \app\modules\v1\models\Trabajador::find()->distinct()->joinWith('fichas.dispositivo.empresa.users')->where('empresa_user.usu_id=:usu AND trabajador.tra_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id])->one();
 		if($model!==null){
 			return $model;
 		}else{
@@ -137,7 +203,7 @@ class EmpresaController extends ActiveController
 	{		
 		$model = \app\modules\v1\models\RvFicha::find()
 			->joinWith('dispositivo.empresa.users')
-			->andWhere('empresa_user.id=:usu AND rv_ficha.trab_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id]);
+			->andWhere('empresa_user.usu_id=:usu AND rv_ficha.trab_id=:id',[':usu'=>Yii::$app->user->identity->primaryKey,':id'=>$id]);
 			
 		$data = new \yii\data\ActiveDataProvider([
 			'query' => $model,

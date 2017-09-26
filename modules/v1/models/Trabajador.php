@@ -72,6 +72,12 @@ class Trabajador extends \yii\db\ActiveRecord
         ];
     }
 
+    public function extraFields()
+    {
+        return ['fichas','src','rs'];
+    }
+
+
     public static function validaRUT($rut)
     {
         $rut = preg_replace('/[^k0-9]/i', '', $rut);
@@ -117,5 +123,15 @@ class Trabajador extends \yii\db\ActiveRecord
     public function getNombreCompleto()
     {
         return implode(" ", array($this->paterno,$this->materno,$this->nombre));
+    }
+
+    public function getRs()
+    {
+        return $this->hasMany(TrabajadorRecursos::className(), ['tra_id' => 'tra_id']);
+    }    
+
+    public function getSrc()
+    {
+        return $this->hasMany(RecursosSources::className(), ['id' => 'src_id'])->via('rs');
     }
 }

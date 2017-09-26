@@ -12,7 +12,9 @@ $config = [
     'components' => [
         'request' => [
             'cookieValidationKey' => 'yC8juG2gpIhV7Rmlx14cPgy3WdB6u4kX',
+            'enableCsrfCookie'=>false,
             'enableCsrfValidation' => false,
+            'enableCookieValidation'=>false,            
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
@@ -50,13 +52,10 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'POST authentication/<action:\w+>' => 'authentication/<action>',
-
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
                         'v1/comuna',
-                        'v1/dispositivo',
-                        'v1/dispositivotipo',
                         'v1/empresadispositivo',
                         'v1/empresauser',
                         'v1/licencia',
@@ -65,11 +64,16 @@ $config = [
                         'v1/pais',
                         'v1/rvalternativa',
                         'v1/rvevaluacion',
-                        'v1/rvficha',
+                        'v1/rvficharecursos',
                         'v1/rvitem',
                         'v1/rvpregunta',
-                        'v1/rvproyecto',
                         'v1/rvrespuesta',
+                        'v1/rvclient',
+                        'v1/rvclientcalificacion',
+                        'v1/rvclientevaluacion',
+                        'v1/rvclientrecursos',
+                        'v1/rvclienttipo',
+                        'v1/rvclientparams',
                         'v1/userauthentication',
                         'v1/userauthorization',
                         'v1/userclient',
@@ -78,6 +82,7 @@ $config = [
                         'v1/rvintalternativa',
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
+                        'v1/tims',
                         'v1/analitycsbitacora',
                         'v1/analitycsbitacoraempresa',
                         'v1/analitycsbitacoratrabajador',
@@ -94,6 +99,33 @@ $config = [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => [
+                        'v1/rvficha',
+                    ],
+                    'extraPatterns' => [
+                        'GET search' => 'search',
+                        'evaluacion' => 'evaluation',
+                        // 'POST changepassword'=>'changepassword'
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/recursossources',
+                    ],
+                    'extraPatterns' => [
+                        'GET file/<id:\d+>' => 'file',
+                        'GET <id:\d+>/view' => 'fileview',
+                        'GET <id:\d+>/download' => 'filedownload',
+                    ],
+                    'pluralize' => false,
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => [
+                        'v1/rvproyecto',
+                        'v1/dispositivo',
+                        'v1/dispositivotipo',
                         'v1/trabajador',
                         'v1/analitycsapp',
                         'v1/analitycsappescena',
@@ -126,7 +158,8 @@ $config = [
                         'v1/empresa',
                     ],
                     'extraPatterns' => [
-                        'POST identity' => 'identity',
+                        'GET identity' => 'viewidentity',
+                        'POST identity' => 'findidentity',
                         'GET search' => 'search',
                         'GET <action:(ficha|trabajador)>'=>'index<action>',
                         'GET <action:(ficha|trabajador)>/<id:\d+>'=>'view<action>',
@@ -138,7 +171,9 @@ $config = [
               
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>'=>'<ns>/<controller>/<action>',
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
-               'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>',
+                
+                'GET report/empresa/ficha/<id:\d+>' => 'report/empresa/ficha',
+               'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>'
             ],
         ],
 
@@ -159,7 +194,7 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1','201.215.22.66'],
     ];
 
     $config['bootstrap'][] = 'gii';

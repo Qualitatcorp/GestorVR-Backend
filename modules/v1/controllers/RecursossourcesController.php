@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class TrabajadorController extends ActiveController
+class RecursossourcesController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\Trabajador';
+	public $modelClass = 'app\modules\v1\models\RecursosSources';
 
 	public function behaviors()
 	{
@@ -20,25 +20,54 @@ class TrabajadorController extends ActiveController
 		]);
 	}
 
-	public function actionIdentity()
+	public function actionFileview($id)
 	{
-		$request=\Yii::$app->request;
-		$post=$request->post();
-		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
+		$model=$this->modelClass::findOne($id);
+		// return $model;
 		if($model!==null)
 		{
-			$model->Attributes=$post;
-			$model->save();
-			return $model;
-		}
-		$model=$this->modelClass::findOne($post);
-		if($model===null)
+			if($model->exists)
+			// if(file_exists($model->dir))
+			{
+				header("Content-type: ".$model->mimeType);
+				header("Content-Disposition: inline");
+				header("Content-Length: ".$model->size);
+				// $file=file_get_contents($model->dir);
+		    	// echo $file;
+				readfile($model->dir);
+				exit;
+			}else
+			{
+				throw new \yii\web\HttpException(404, "El recurso no se encuentra disponible.");
+			}
+		}else
 		{
-			$model=new $this->modelClass();
-			$model->attributes=$post;
-			$model->save();
+			throw new \yii\web\HttpException(404, "El recurso no existe.");
 		}
-		return $model;
+	}
+
+	public function actionFiledownload($id)
+	{
+		$model=$this->modelClass::findOne($id);
+		// return $model;
+		if($model!==null)
+		{
+			if($model->exists)
+			{
+				header("Content-type: ".$model->mimeType);
+				header("Content-Disposition: attachment; filename=\"$model->title\"");
+				header("Content-Length: ".$model->size);
+		    	// echo $file;
+				readfile($model->dir);
+				exit;
+			}else
+			{
+				throw new \yii\web\HttpException(404, "El recurso no se encuentra disponible.");
+			}
+		}else
+		{
+			throw new \yii\web\HttpException(404, "El recurso no existe.");
+		}
 	}
 
 	public function actionSearch()
@@ -79,16 +108,4 @@ class TrabajadorController extends ActiveController
 			throw new \yii\web\HttpException(400, 'No se puede crear una query a partir de la informacion propuesta.');
 		}
 	}
-
-	// public function actionIdentity()
-	// {
-	// 	$request=\Yii::$app->request;
-	// 	$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
-	// 	if($model===null){
-	// 		$model=new $this->modelClass();
-	// 	}
-	// 	$model->attributes=$request->post();
-	// 	$model->save();
-	// 	return $model;
-	// }
 }

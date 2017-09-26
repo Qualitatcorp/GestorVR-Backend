@@ -4,6 +4,11 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
+use app\modules\v1\models\Dispositivo;
+use app\modules\v1\models\RvFicha;
+use app\modules\v1\models\RvAlternativa;
+use app\modules\v1\models\RvRespuesta;
+
 class RvfichaController extends ActiveController
 {
 	public $modelClass = 'app\modules\v1\models\RvFicha';
@@ -18,6 +23,75 @@ class RvfichaController extends ActiveController
 				'class' => \app\components\Authorization::className(),
 			],
 		]);
+	}
+
+	public function actionEvaluation()
+	{
+		$request=\Yii::$app->request;
+		if(!$request->isPost)
+		{
+			throw new \yii\web\HttpException(405, 'Metodo no permitido.');
+		}
+		/*
+		 *	Resuelve restriccion de Dispositivo
+		 */
+		$Dispositivo=Dispositivo::findOne($request->post("disp_id"));
+		if($Dispositivo!==null)
+		{
+			if(!$Dispositivo->permission)
+			{
+				throw new \yii\web\HttpException(401, 'Dispositivo no habilitado.');
+			}
+		}
+		else
+		{
+			throw new \yii\web\HttpException(404, 'No Existe el dispositivo.');
+		}
+		/*
+		 * Verificacion de Respuestas
+		 */
+
+		$respuestas=$request->post('respuestas',null);
+		if($respuestas!==null)
+		{
+			if(RvAlternativa::find()->where(['IN','alt_id',array_column($respuestas,'alt_id')])->count()!=count($respuestas)){
+				throw new \yii\web\HttpException(404, 'La evaluacion no tiene respuestas validas.'.RvAlternativa::find()->where(['IN','alt_id',array_column($respuestas,'alt_id')])->count().count($respuestas));
+			}
+		}
+		else
+		{
+			throw new \yii\web\HttpException(404, 'La evaluacion no tiene respuestas.');
+		}
+		/*
+		 * Creacion de Evaluación y respuestas
+		 */
+		$ficha=new RvFicha();
+		$ficha->Attributes=$request->post();
+		if($ficha->save())
+		{
+			$respuestas_save=array();
+			foreach ($respuestas as $r) 
+			{
+				$respuesta=new RvRespuesta();
+				$respuesta->Attributes=$r;
+				$respuesta->fic_id=$ficha->primaryKey;
+				if($respuesta->save())
+				{
+					$respuestas_save[]=$respuesta;
+				}
+				else
+				{
+					return $respuesta;
+				}
+			}
+			$response=$ficha->getAttributes();
+			$response['respuestas']=$respuestas_save;
+			return $response;
+		}
+		else
+		{
+			return $ficha;
+		}
 	}
 
 	public function actionSearch()

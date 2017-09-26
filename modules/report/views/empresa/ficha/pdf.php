@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 <div class="container">
 	<div class="row">
 		<div class="col-xs-2">
-			<img src="<?= \Yii::$app->params['BasePathImage'].'ficha/logo.png'?>" alt="" style="max-width: 120px;height: 120px;">
+		<?php 
+			$photo=$model->getPhoto()->One();
+		 ?>
+		<?php if ($photo!==null): ?>
+			<?php $src=$photo->src; ?>
+			<?php if ($src->exists): ?>
+				<img src="<?= $src->Url?>" alt="" class="img-thumbnail">
+			<?php else: ?>			
+				<img src="<?= \Yii::$app->params['BasePathImage'].'ficha/logo.png'?>" alt="" class="img-responsive">
+			<?php endif ?>
+		<?php else: ?>
+			<img src="<?= \Yii::$app->params['BasePathImage'].'ficha/logo.png'?>" alt="" class="img-responsive">
+		<?php endif ?>
 		</div>
 		<div class="col-xs-6">
 			<?php  
