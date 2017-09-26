@@ -20,6 +20,27 @@ class TrabajadorController extends ActiveController
 		]);
 	}
 
+	public function actionIdentity()
+	{
+		$request=\Yii::$app->request;
+		$post=$request->post();
+		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
+		if($model!==null)
+		{
+			$model->Attributes=$post;
+			$model->save();
+			return $model;
+		}
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
+			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
+		}
+		return $model;
+	}
+
 	public function actionSearch()
 	{
 		if (!empty($_GET)) {
@@ -59,25 +80,15 @@ class TrabajadorController extends ActiveController
 		}
 	}
 
-
-	public function actionIdentity()
-	{
-		$request=\Yii::$app->request;
-		$post=$request->post();
-		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
-		if($model!==null)
-		{
-			$model->Attributes=$post;
-			$model->save();
-			return $model;
-		}
-		$model=$this->modelClass::findOne($post);
-		if($model===null)
-		{
-			$model=new $this->modelClass();
-			$model->attributes=$post;
-			$model->save();
-		}
-		return $model;
-	}
+	// public function actionIdentity()
+	// {
+	// 	$request=\Yii::$app->request;
+	// 	$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
+	// 	if($model===null){
+	// 		$model=new $this->modelClass();
+	// 	}
+	// 	$model->attributes=$request->post();
+	// 	$model->save();
+	// 	return $model;
+	// }
 }

@@ -84,6 +84,7 @@ class EmpresaController extends ActiveController
  * Ficha de perteneciente a la emrpesa
  *
  */
+
 	public function actionIndexficha()
 	{
 		$request=Yii::$app->request;
