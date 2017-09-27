@@ -79,14 +79,15 @@ class RvFicha extends \yii\db\ActiveRecord
         return [
             'trabajador',
             'params',
-            'data',
             'proyecto',
             'evaluacion',
             'proyecto',
             'dispositivo',
             'pais',
-            'respuestas',
+            'preguntas',
             'alternativas',
+            'respuestas',
+            'items',
             'ceim',
             'recursos',
             'src'
@@ -123,16 +124,26 @@ class RvFicha extends \yii\db\ActiveRecord
         return $this->hasMany(RvRespuesta::className(), ['fic_id' => 'fic_id']);
     }
 
-    public function getParams()
-    {
-        return $this->hasOne(RvFichaParams::className(), ['fic_id' => 'fic_id']);
-    }
-
     public function getAlternativas()
     {
         return $this->hasMany(RvAlternativa::className(), ['alt_id' => 'alt_id'])->via('respuestas');
     }
     
+    public function getPreguntas()
+    {
+        return $this->hasMany(RvPregunta::className(), ['pre_id' => 'pre_id'])->via('alternativas');
+    }
+
+    public function getItems()
+    {
+        return $this->hasMany(RvItem::className(), ['ite_id' => 'ite_id'])->via('preguntas');
+    }
+
+    public function getParams()
+    {
+        return $this->hasOne(RvFichaParams::className(), ['fic_id' => 'fic_id']);
+    }
+
     public function getRecursos()
     {
         return $this->hasMany(RvFichaRecursos::className(), ['fic_id' => 'fic_id']);

@@ -103,7 +103,7 @@ $config = [
                     ],
                     'extraPatterns' => [
                         'GET search' => 'search',
-                        'evaluacion' => 'evaluation',
+                        'POST evaluacion' => 'evaluation',
                         // 'POST changepassword'=>'changepassword'
                     ],
                     'pluralize' => false,
