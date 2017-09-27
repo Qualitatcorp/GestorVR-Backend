@@ -91,7 +91,8 @@ class RvFicha extends \yii\db\ActiveRecord
             'recursos',
             'src',
             'reacreditacion',
-            'notas'
+            'notas',
+            'clientcalificacion'
         ];
     }
 
@@ -99,6 +100,7 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return $this->hasOne(RvEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
+
 
     public function getTrabajador()
     {
@@ -118,6 +120,9 @@ class RvFicha extends \yii\db\ActiveRecord
     public function getPais()
     {
         return $this->hasOne(Pais::className(), ['pais_id' => 'pais_id']);
+    }
+    public function getClientcalificacion(){
+          return $this->hasOne(rvClientcalificacion::className(), ['fic_id' => 'fic_id']);
     }
 
     public function getRespuestas()
