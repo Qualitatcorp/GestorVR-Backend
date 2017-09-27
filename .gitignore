@@ -34,3 +34,6 @@ config/db.php
 *.pdf
 config/params.php
 config/params.php
+config/params.php
+modules/report/controllers/EmpresaController.php
+modules/v1/controllers/TimsController.php

@@ -20,7 +20,12 @@
 	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong> para estas funciones";  //el trabajador presenta
 	$aps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong>";
 
-
+	$notaInfo3 = $ficha->clientcalificacion->calificacion;
+	if(!$notaInfo3){
+		$notaInfo3 = null;
+	}else{
+		$notaInfo3=$notaInfo3*100;
+	}
 	$trabajador = $ficha->trabajador;
 	$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
 	$evaluacion = $ficha->evaluacion;
@@ -51,11 +56,16 @@
 	}
 	//$informe 3
  
-	 
-	$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
+	
+	//$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
+
+	
 	if($notaInfo3 > 69){
 		$textInfo3 = $aps;
-	}else{
+	}else if($notaInfo3 == null){
+
+	}
+	else{
 		$textInfo3 = $bps;
 	}
 	 

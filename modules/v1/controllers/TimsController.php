@@ -94,6 +94,7 @@ class TimsController extends  Controller
 
 		$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
 		$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
+		 
 		if($ClientParam){ //verificamos que exista
 			  $results = json_decode($ClientParam->content); //convertimos los datos array
 			  if($results->nota and $results->pdf ){ // si existe nota, eval finalizada y actualizada

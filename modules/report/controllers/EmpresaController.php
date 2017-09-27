@@ -23,6 +23,7 @@ class EmpresaController extends Controller
     }
     public function actionFicha($id)
     {
+
         $ficha = \app\modules\v1\models\RvFicha::find()->andWhere(["fic_id" => $id])->one();
         if(!$ficha){throw new \yii\web\HttpException(404, 'No existe la ficha de evaluación solicitada.');}
         if($ficha->eva_id == 50){
@@ -30,6 +31,7 @@ class EmpresaController extends Controller
         }else{
             $reporte = $ficha->evaluacion->reporte;
         }
+        
         switch($reporte) {
             case 'CERT_1':
             return $this->cert1($ficha,$id);
@@ -44,6 +46,7 @@ class EmpresaController extends Controller
     }
 
     private function normal($id){ //ficha, id
+        return $id;
         $model = \app\modules\v1\models\RvFicha::find()
             ->joinWith('dispositivo.empresa.users')
             ->andWhere('empresa_user.usu_id=:usu AND rv_ficha.fic_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id])
