@@ -17,17 +17,19 @@
 	$be ="El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento  en Estándares ENAP";
 	$ae ="El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimientos en Estándares ENAP ";
 	//perfil psioclogico
-	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong>";  //el trabajador presenta
-	$aps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong>";
+	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong> de conducta asociada al riego";  //el trabajador presenta
+	$aps ="El trabajador presenta un perfil <strong> No Adecuado </strong> de conducta asociada al riego";
 
- 
-	$notaInfo3 = $ficha->params->data->riesgo->nota;
-	  
+ 	if($ficha->params->data['riesgo']['nota'] <>null){
+ 		$notaInfo3 =number_format( $ficha->params->data['riesgo']['nota']*100);
+ 	}else{
+ 		$notaInfo3 = null; 
+ 	}
 	$trabajador = $ficha->trabajador;
 	$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
 	$evaluacion = $ficha->evaluacion;
 	$ceim = $ficha->ceim;
-	$calificacion = $ficha->params->data->nota;
+	$calificacion = number_format( $ficha->params->data['nota']*100);
 	 
 	// semaforo
 	if($calificacion > 69){
@@ -36,7 +38,7 @@
 		$noaprobado = $calificacion . '%';
 	}
 
-	$notaInfo1 =   $ficha->params->data->percepcion->nota; //tomar nota de controlador
+	$notaInfo1 =   number_format($ficha->params->data['percepcion']['nota']*100); //tomar nota de controlador
 	// $notaInfo1 = 89;
 	if($notaInfo1 > 89){
 		$textInfo1 = $ap;
@@ -45,7 +47,7 @@
 	}
 	//$informe 2
 	 
-	$notaInfo2 = $ficha->params->data->conocimiento->nota;// tomar prenota de controlador;
+	$notaInfo2 = number_format($ficha->params->data['conocimiento']['nota']*100);// tomar prenota de controlador;
 	if($notaInfo2 > 69){
 		$textInfo2 = $ae;
 	}else{
@@ -56,11 +58,12 @@
 	
 	//$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
 
-	
-	if($notaInfo3 > 69){
-		$textInfo3 = $aps;
-	}else if($notaInfo3 == null){
+	$textInfo3 = '';
 
+	if($notaInfo3 === null){
+		$textInfo3 = "la nota psicologica no se encuentra disponible en estos momentos";
+	}else if($notaInfo3 > 69){
+		$textInfo3 = $aps;
 	}
 	else{
 		$textInfo3 = $bps;
@@ -164,11 +167,11 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30">   Número de detección de errores del ambiente: <?=$ficha->params->data->percepcion->pri->correcto?>
-					(<?=$ficha->params->data->percepcion->pri->total?>)</div>
+				<div class="margin-left-30">   Número de detección de errores del ambiente: <?=$ficha->params->data['percepcion']['pri']['correcto']?>
+					(<?=$ficha->params->data['percepcion']['pri']['total']?>)</div>
 				<div class="margin-left-30">   Número de visualización de errores externos al evento:
-				 <?=$ficha->params->data->percepcion->sec->total?> 
-				 (<?=$ficha->params->data->percepcion->sec->total?>) </div>
+				 <?=$ficha->params->data['percepcion']['sec']['total']?> 
+				 (<?=$ficha->params->data['percepcion']['sec']['total']?>) </div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
@@ -184,24 +187,21 @@ switch ($mes) {
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
 				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  
-					<?=$ficha->params->data->conocimiento->correcta?> 
-					(<?=$ficha->params->data->conocimiento->total?>)</div>
+					<?=$ficha->params->data['conocimiento']['correcto']?> 
+					(<?=$ficha->params->data['conocimiento']['total']?>)</div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  3.- Informe Psicológico   </div>
+			<div class="bold">  3.- Informe Adecuación al Perfil   </div>
 			<br>
 			<div class="bold floatL Width20">
 				NOTA: <?= $notaInfo3 ?> %
 			</div>
 			<div class="Width40 ">
-				<?= $textInfo3 ?> 
+				  <?=$textInfo3  ?>  
 			</div>
-			<div class="margin-top-15">
-				Detalle de Informe comparativo sobre el óptimo de:
-				<br>
-				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento: xx (10)</div> 
-			</div>
+			 
+			 
 		</div>
 		<!-- informe 3  fin-->
 	</div

@@ -111,8 +111,8 @@ class TimsController extends  Controller
 
 		$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
 		$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
+      
 
-		 
 		if($ClientParam){ //verificamos que exista
 			  $results = json_decode($ClientParam->content); //convertimos los datos array
 			  if($results->nota and $results->pdf){ // si existe nota, eval finalizada y actualizada
@@ -240,10 +240,9 @@ class TimsController extends  Controller
     private function saveRiesgo($nota,$id){
 		$ficha = RvFicha::find()->andWhere(["fic_id" => $id])->one();
 	    $params = $ficha->params;
-		 $data=$params->data;
-		 //['conocimiento']=['nota'=> $nota];
-		 $data->conocimiento->nota= $nota;
-		 $params->data = $data;
-	     return $params->save();
+	    $data = $params->data;
+	    $data['riesgo']['nota']=$nota;
+	    $params->data =$data ;
+	    return $params->save();
     }
 }
