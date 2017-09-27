@@ -20,17 +20,14 @@
 	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong>";  //el trabajador presenta
 	$aps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong>";
 
-	$notaInfo3 = $ficha->clientcalificacion->calificacion;
-	if(!$notaInfo3){
-		$notaInfo3 = null;
-	}else{
-		$notaInfo3=$notaInfo3*100;
-	}
+ 
+	$notaInfo3 = $ficha->params->data->riesgo->nota;
+	  
 	$trabajador = $ficha->trabajador;
 	$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
 	$evaluacion = $ficha->evaluacion;
 	$ceim = $ficha->ceim;
-	$calificacion = $nota_test;
+	$calificacion = $ficha->params->data->nota;
 	 
 	// semaforo
 	if($calificacion > 69){
@@ -39,7 +36,7 @@
 		$noaprobado = $calificacion . '%';
 	}
 
-	$notaInfo1 =  $nota_test; //tomar nota de controlador
+	$notaInfo1 =   $ficha->params->data->percepcion->nota; //tomar nota de controlador
 	// $notaInfo1 = 89;
 	if($notaInfo1 > 89){
 		$textInfo1 = $ap;
@@ -48,7 +45,7 @@
 	}
 	//$informe 2
 	 
-	$notaInfo2 = $nota_test;// tomar prenota de controlador;
+	$notaInfo2 = $ficha->params->data->conocimiento->nota;// tomar prenota de controlador;
 	if($notaInfo2 > 69){
 		$textInfo2 = $ae;
 	}else{
@@ -167,8 +164,11 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30">   Número de detección de errores del ambiente:  xx (12)</div>
-				<div class="margin-left-30">   Número de visualización de errores externos al evento: xx (10) </div>
+				<div class="margin-left-30">   Número de detección de errores del ambiente: <?=$ficha->params->data->percepcion->pri->correcto?>
+					(<?=$ficha->params->data->percepcion->pri->total?>)</div>
+				<div class="margin-left-30">   Número de visualización de errores externos al evento:
+				 <?=$ficha->params->data->percepcion->sec->total?> 
+				 (<?=$ficha->params->data->percepcion->sec->total?>) </div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
@@ -183,7 +183,9 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  xx (20)</div>
+				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  
+					<?=$ficha->params->data->conocimiento->correcta?> 
+					(<?=$ficha->params->data->conocimiento->total?>)</div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">

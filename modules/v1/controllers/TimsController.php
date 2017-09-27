@@ -24,7 +24,11 @@ class TimsController extends  Controller
 
 	public function actionIndex()
 	{
-		return RvFicha::findOne(18461);
+		$ficha = RvFicha::findOne(18378);
+		
+	   
+
+
 	}
  
     public function actionCreate()
@@ -107,17 +111,20 @@ class TimsController extends  Controller
 
 		$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
 		$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
+
 		 
 		if($ClientParam){ //verificamos que exista
 			  $results = json_decode($ClientParam->content); //convertimos los datos array
-			  if($results->nota and $results->pdf ){ // si existe nota, eval finalizada y actualizada
+			  if($results->nota and $results->pdf){ // si existe nota, eval finalizada y actualizada
 			  	$result = json_decode($ClientParam->content);
 				$result = array(
 					'id' => $result->id,
 					'pdf' =>  $result->pdf,
 					'nota' => $result->nota ,
 				);
-				
+				 
+				 
+		 
 				return $result;   	
 			  }else{ //Aca actualiza el codigo desde la db
 		  	    $result = json_decode($ClientParam->content);
@@ -144,17 +151,23 @@ class TimsController extends  Controller
 					else{
 						$calificacion = RvClientCalificacion::find()->andWhere(["fic_id" => $id])->one();
 						if(!$calificacion){
+							
+							$nota = intval($curl_result->Jca[0]->PjeCom)/100;
 						 	$calificacion = new  RvClientCalificacion; //guardamos la nota
 							$calificacion->fic_id = $id;
 							$calificacion->cli_eva_id = 1 ;
-							$calificacion->calificacion =  intval($curl_result->Jca[0]->PjeCom)/100;
+							$calificacion->calificacion =  $nota;
 							$calificacion->save();
+							// se guardan los datos en la ficha 
+
+
+							
 						}
-						
-						 
+						$this->saveRiesgo(($params['nota']/100),$id);
+						//return $nombre_server =  $this->existInExternalServer($result->url); //rescatamos el archivo desde el  
 						return $params;
 						//definir la carpeta donde se guardaran los pdf
-						//$nombre_server =  $this->existInExternalServer($result->Jca[0]->RepLink); //rescatamos el archivo desde el  
+						
 					}
 
 				
@@ -188,40 +201,49 @@ class TimsController extends  Controller
 		return $result;
     }
     private function existInExternalServer($file){//verifica que el archivo este disponible
-    	$fp = curl_init($file); 
-    	$ret = curl_setopt($fp, CURLOPT_RETURNTRANSFER, 1); 
-    	$ret = curl_setopt($fp, CURLOPT_TIMEOUT, 30); 
-    	$ret = curl_exec($fp); 
-    	$info = curl_getinfo($fp, CURLINFO_HTTP_CODE); 
-    	curl_close($fp); 
+    	$cl = curl_init($file); 
+    	$ret = curl_setopt($cl, CURLOPT_RETURNTRANSFER, 1); 
+    	$ret = curl_setopt($cl, CURLOPT_TIMEOUT, 30); 
+    	$ret = curl_exec($cl); 
+    	$info = curl_getinfo($cl, CURLINFO_HTTP_CODE); 
+
+
+    	//curl_close($cl); 
     	if($info == 404){ 
     		return "documento no  existe";
     	}else{ 
-    		return $this->getFile($file);
+    		return $this->getFile($cl);
     	}
     } 
-    private function  getFile($file){ // toma el archivo y lo descarga
+    private function  getFile($cl){ // toma el archivo y lo descarga
     	//podemos reservar el nombre en la base de datos
-    	//$pat = /Yii::$app->params['baseUrlFront']
     	 
-    	
     	$server_name = $this->exist();
-    	$cl = curl_init($file); 
-    	$fp = fopen($server_name, "w", include_path); 
+    	//$cl = curl_init($file); 
+    	$fp = fopen($server_name, "w"); 
     	curl_setopt($cl, CURLOPT_FILE, $fp); 
-    	curl_setopt($cl, CURLOPT_HEADER, 0); 
+    	curl_setopt($cl, CURLOPT_HEADER, array('Content-Encoding: none','Content-Type: application/pdf')); 
     	curl_exec($cl); 
     	curl_close($cl); 
     	fclose($fp); 
-    	return $server_name;
+    	return  $server_name;
     }
     private function  exist(){	 //asigna un nombre al archivo que se ecuentre disponible
-
-    	$server_name = uniqid().'.pdf';
+    	$pat = \Yii::$app->params['baseDirFront'] ;
+    	$server_name =  $pat.uniqid().'.pdf';
     	if (file_exists($server_name)) { // verificar la ruta
     		$this->exist();
     	} else {
-    		return  $server_name ;
+    		return  $server_name ; //'59cbbbafbff58'; //
     	}
+    }
+    private function saveRiesgo($nota,$id){
+		$ficha = RvFicha::find()->andWhere(["fic_id" => $id])->one();
+	    $params = $ficha->params;
+		 $data=$params->data;
+		 //['conocimiento']=['nota'=> $nota];
+		 $data->conocimiento->nota= $nota;
+		 $params->data = $data;
+	     return $params->save();
     }
 }

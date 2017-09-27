@@ -46,7 +46,7 @@ class EmpresaController extends Controller
     }
 
     private function normal($id){ //ficha, id
-        return $id;
+       
         $model = \app\modules\v1\models\RvFicha::find()
             ->joinWith('dispositivo.empresa.users')
             ->andWhere('empresa_user.usu_id=:usu AND rv_ficha.fic_id=:id',[':usu'=>\Yii::$app->user->identity->primaryKey,':id'=>$id])
@@ -71,6 +71,8 @@ class EmpresaController extends Controller
     }
     private function cert1($ficha,$id){
         //18318
+        
+       
         $head = $this->renderPartial('cert/cert1',array('ficha'=>$ficha),true);
         $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/ceim.css');
         $mpdf = new \mPDF();

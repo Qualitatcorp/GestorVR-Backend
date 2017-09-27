@@ -5,5 +5,5 @@ return [
     'BasePathImage'=>'http://gestorvr.qualitatcorp.cl/images/',
     'BasePathImage'=>'http://127.0.0.1/images/',
     'baseUrlFront'=>'http://localhost/src/',
-    'baseDirFront'=>"C:/xampp/htdocs/src/"
+    'baseDirFront'=>"d:/usuario/xampp/htdocs/src/"
 ];
