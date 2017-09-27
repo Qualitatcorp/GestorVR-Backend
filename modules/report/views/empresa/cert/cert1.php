@@ -12,12 +12,12 @@
 	function upper($string){return strtoupper($string);}
 	// persepcion de riesgo
 	$bp ="El trabajador presenta una <strong>Baja</strong> Percepción del riesgo";
-	$ap ="El trabajador presenta una <strong>alta</strong> Percepción del Riesgo";
+	$ap ="El trabajador presenta una <strong>Alta</strong> Percepción del Riesgo";
 	//concimientos de seguridad
 	$be ="El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento  en Estándares ENAP";
-	$ae ="El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimientos en Estándares ENAP ";
+	$ae ="El trabajador presenta un nivel <strong>Alto</strong> de Conocimientos en Estándares ENAP ";
 	//perfil psioclogico
-	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong> de conducta asociada al riego";  //el trabajador presenta
+	$bps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong> de conducta asociada al riego";  //el trabajador presenta
 	$aps ="El trabajador presenta un perfil <strong> No Adecuado </strong> de conducta asociada al riego";
 
  	if($ficha->params->data['riesgo']['nota'] <>null){

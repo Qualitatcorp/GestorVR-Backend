@@ -124,7 +124,7 @@ class TimsController extends  Controller
 				);
 				 
 				 
-		 
+		 		$this->saveRiesgo(($result['nota']/100),$id);
 				return $result;   	
 			  }else{ //Aca actualiza el codigo desde la db
 		  	    $result = json_decode($ClientParam->content);
@@ -242,7 +242,11 @@ class TimsController extends  Controller
 	    $params = $ficha->params;
 	    $data = $params->data;
 	    $data['riesgo']['nota']=$nota;
-	    $params->data =$data ;
+	   
+	    $notaInfo1 = $data['percepcion']['nota'];
+	    $notaInfo2 = $data['conocimiento']['nota'];
+	    $data['nota'] = ($notaInfo1 +  $notaInfo2 +  $nota)/3;
+ 	    $params->data =$data ;
 	    return $params->save();
     }
 }
