@@ -31,7 +31,6 @@ class RvFicha extends \yii\db\ActiveRecord
         return 'rv_ficha';
     }
 
-
     public function rules()
     {
         return [
@@ -80,6 +79,8 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return [
             'trabajador',
+            'params',
+            'data',
             'proyecto',
             'evaluacion',
             'proyecto',
@@ -128,6 +129,11 @@ class RvFicha extends \yii\db\ActiveRecord
     public function getRespuestas()
     {
         return $this->hasMany(RvRespuesta::className(), ['fic_id' => 'fic_id']);
+    }
+
+    public function getParams()
+    {
+        return $this->hasOne(RvFichaParams::className(), ['fic_id' => 'fic_id']);
     }
 
     public function getAlternativas()
@@ -277,8 +283,12 @@ class RvFicha extends \yii\db\ActiveRecord
 
         $base=[
             "pregunta"=>[
-                "correctas"=>[2556,2558,2560,2562,2564,2566,2568,2570,2572,2574,2576,2578,2580,2582,2584,2586,2588,2590,2592,2594],
-                "incorrectas"=>[2557,2559,2561,2563,2565,2567,2569,2571,2573,2575,2577,2579,2581,2583,2585,2587,2589,2591,2593,2595]
+                "correctas"=>[
+                            2556,2558,2560,2562,2564,2566,2568,2570,2572,2574,2576,2578,2580,2582,2584,2586,2588,2590,2592,2594,
+                            2940,2942,2944,2946,2948,2950,2952,2954,2956,2958,2960,2962,2964,2966,2968,2970,2972,2974,2976,2978],
+                "incorrectas"=>[
+                            2557,2559,2561,2563,2565,2567,2569,2571,2573,2575,2577,2579,2581,2583,2585,2587,2589,2591,2593,2595,
+                            2941,2943,2945,2947,2949,2951,2953,2955,2957,2959,2961,2963,2965,2967,2969,2971,2973,2975,2977,2979]
             ],
             "primario"=>[
                 "decidibles"=>[

@@ -20,6 +20,13 @@ class TimsController extends  Controller
 			],
 		]);
 	}
+ 
+
+	public function actionIndex()
+	{
+		return RvFicha::findOne(18461);
+	}
+ 
     public function actionCreate()
 	{   //paramatro de entrada fic_id
 		$post = \Yii::$app->request->post();
@@ -57,7 +64,8 @@ class TimsController extends  Controller
 					if(gettype($result) === 'object'){// verificar que se devuelva la informacion correpondiente
 						//  Al inscribir retorna  dos codigos
 						$params = array( //seteamos un array que sera nuestro objeto en params
-							'id' =>$ficha->fic_id,
+							'fic_id'=>$ficha->fic_id,
+							'id' =>$result->PcaCod,
 							'pdf' => null,
 							'nota'=>null,
 							'url' =>$result->PcaLink, 
@@ -78,14 +86,19 @@ class TimsController extends  Controller
 					}
 				}else{ // si existe la rescatamos
 					$result = json_decode($ClientParam->content); 
-				    $result = array('id' => $result->id,'url' =>$result->url);
+				    $result = array(
+				    	'id' => $result->id,
+				    	'url' =>$result->url,
+				    	'pdf'=>$result->pdf,
+				    	'nota'=>$result->nota
+				    );
                     return  $result ;
 				}
 			}else{
-				throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+				throw new \yii\web\HttpException(404, 'No existe ficha para la inscripción de la evaluación psicologica.');
 			}
 		}else{
-			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+			throw new \yii\web\HttpException(422, 'No se encuentran los parametros para la inscripción de la ficha.');
 		}
    
 	}
@@ -144,21 +157,14 @@ class TimsController extends  Controller
 						//$nombre_server =  $this->existInExternalServer($result->Jca[0]->RepLink); //rescatamos el archivo desde el  
 					}
 
-					
-					 	
- 
+				
 
-
- 
-
-
-
-				}else{//evaluacion no fialiada
+				}else{//evaluacion  
 					throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 				}
 			  }
 
-		}else{ //en caso de no existir $ClienteParam
+ 
 			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 		}
 
