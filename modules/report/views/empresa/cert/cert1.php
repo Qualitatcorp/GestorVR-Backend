@@ -17,7 +17,7 @@
 	$be ="El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento  en Estándares ENAP";
 	$ae ="El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimientos en Estándares ENAP ";
 	//perfil psioclogico
-	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong> para estas funciones";  //el trabajador presenta
+	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong>";  //el trabajador presenta
 	$aps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong>";
 
 	$notaInfo3 = $ficha->clientcalificacion->calificacion;
