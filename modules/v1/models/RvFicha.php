@@ -31,7 +31,6 @@ class RvFicha extends \yii\db\ActiveRecord
         return 'rv_ficha';
     }
 
-
     public function rules()
     {
         return [
@@ -79,6 +78,8 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return [
             'trabajador',
+            'params',
+            'data',
             'proyecto',
             'evaluacion',
             'proyecto',
@@ -120,6 +121,11 @@ class RvFicha extends \yii\db\ActiveRecord
     public function getRespuestas()
     {
         return $this->hasMany(RvRespuesta::className(), ['fic_id' => 'fic_id']);
+    }
+
+    public function getParams()
+    {
+        return $this->hasOne(RvFichaParams::className(), ['fic_id' => 'fic_id']);
     }
 
     public function getAlternativas()

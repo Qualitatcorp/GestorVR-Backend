@@ -20,6 +20,11 @@ class TimsController extends  Controller
 		]);
 	}
 
+	public function actionIndex()
+	{
+		return RvFicha::findOne(18461);
+	}
+
     public function actionCreate()
 	{   //paramatro de entrada fic_id
 		$post = \Yii::$app->request->post();
@@ -88,10 +93,10 @@ class TimsController extends  Controller
                     return  $result ;
 				}
 			}else{
-				throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+				throw new \yii\web\HttpException(404, 'No existe ficha para la inscripción de la evaluación psicologica.');
 			}
 		}else{
-			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+			throw new \yii\web\HttpException(422, 'No se encuentran los parametros para la inscripción de la ficha.');
 		}
    
 	}
@@ -143,12 +148,13 @@ class TimsController extends  Controller
 				}else{//evaluacion no fialiada
 					throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 				}
-
-			  	return  'actualizar';
 			  }
 
-		}else{ //en caso de no existir $ClienteParam
-			return 'no existe';
+		}
+		else
+		{ 
+			//en caso de no existir $ClienteParam
+			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 		}
 
 	}

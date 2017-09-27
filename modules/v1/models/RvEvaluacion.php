@@ -60,17 +60,29 @@ class RvEvaluacion extends \yii\db\ActiveRecord
 
     public function extraFields()
     {
-        return ['preguntas','alternativas'];
+        return [
+            'preguntas',
+            'items',
+            'alternativas',
+            'clients',
+            'clientsTipo',
+            'clientsEva'
+        ];
     }
 
-    public function getClientEvaluacions()
+    public function getClientsEva()
     {
         return $this->hasMany(RvClientEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
    
+    public function getClientsTipo()
+    {
+        return $this->hasMany(RvClientTipo::className(), ['id' => 'clit_id'])->via('clientsEva');
+    }
+
     public function getClients()
     {
-        return $this->hasMany(RvClientTipo::className(), ['id' => 'clit_id'])->viaTable('rv_client_evaluacion', ['eva_id' => 'eva_id']);
+        return $this->hasMany(RvClient::className(), ['id' => 'cli_id'])->via('clientsTipo');
     }
 
     public function getTipo()
@@ -90,6 +102,11 @@ class RvEvaluacion extends \yii\db\ActiveRecord
     public function getPreguntas()
     {
         return $this->hasMany(RvPregunta::className(), ['eva_id' => 'eva_id']);
+    }
+
+    public function getItems()
+    {
+        return $this->hasMany(RvItem::className(),['ite_id'=>'ite_id'])->via('preguntas');
     }
     
     public function getAlternativas()

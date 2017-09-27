@@ -38,6 +38,7 @@ class Trabajador extends \yii\db\ActiveRecord
     {
         return [
             [['nacimiento', 'creacion', 'modificado'], 'safe'],
+            [['sexo'], 'string'],
             [['antiguedad', 'hijos'], 'integer'],
             [['rut'], 'string', 'max' => 255],
             [['nombre'], 'string', 'max' => 150],
@@ -60,6 +61,7 @@ class Trabajador extends \yii\db\ActiveRecord
             'paterno' => 'Paterno',
             'materno' => 'Materno',
             'nacimiento' => 'Nacimiento',
+            'sexo' => 'Sexo',
             'fono' => 'Fono',
             'mail' => 'Mail',
             'gerencia' => 'Gerencia',
