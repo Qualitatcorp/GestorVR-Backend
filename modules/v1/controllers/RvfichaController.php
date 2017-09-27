@@ -164,6 +164,7 @@ class RvfichaController extends ActiveController
 			 * Se define el parametro temporal para almacenar la evaluacion
 			 */
 
+
 			$paramsTemp=[
 				"percepcion"=>[
 					'pri'=>[
@@ -182,7 +183,11 @@ class RvfichaController extends ActiveController
 				"conocimiento"=>[
 					"total"=>0,
 					"correcto"=>0
-				]
+				],
+				"riesgo"=>[
+					"nota"=>null
+				],
+				"nota"=>null
 			];
 
 			/*
@@ -216,10 +221,10 @@ class RvfichaController extends ActiveController
 			/* 
 			 * Calcular Notas
 			 */
-
-			$paramsTemp['percepcion']['pri']['nota']=$paramsTemp['percepcion']['pri']['correcto']/$paramsTemp['percepcion']['pri']['total'];
-			$paramsTemp['percepcion']['sec']['nota']=$paramsTemp['percepcion']['sec']['correcto']/$paramsTemp['percepcion']['sec']['total'];
-			$paramsTemp['percepcion']['dis']['nota']=$paramsTemp['percepcion']['dis']['correcto']/$paramsTemp['percepcion']['dis']['total'];
+			$notaPrincipal=$paramsTemp['percepcion']['pri']['correcto']/$paramsTemp['percepcion']['pri']['total'];
+			$notaSecundaria=$paramsTemp['percepcion']['sec']['correcto']/$paramsTemp['percepcion']['sec']['total'];
+			$notaDistractor=$paramsTemp['percepcion']['dis']['correcto']/$paramsTemp['percepcion']['dis']['total'];
+			$paramsTemp['percepcion']['nota']=$notaPrincipal*0.75+$notaSecundaria*0.15+$notaDistractor*0.1;
 			$paramsTemp['conocimiento']['nota']=$paramsTemp['conocimiento']['correcto']/$paramsTemp['conocimiento']['total'];
 
 			/*
