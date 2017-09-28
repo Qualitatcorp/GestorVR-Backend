@@ -38,3 +38,4 @@ config/params.php
 modules/report/controllers/EmpresaController.php
 modules/v1/controllers/TimsController.php
 config/params.php
+modules/v1/models/RvFicha.php
