@@ -242,11 +242,13 @@ class TimsController extends  Controller
 	    $params = $ficha->params;
 	    $data = $params->data;
 	    $data['riesgo']['nota']=$nota;
-	   
+
 	    $notaInfo1 = $data['percepcion']['nota'];
 	    $notaInfo2 = $data['conocimiento']['nota'];
 	    $data['nota'] = ($notaInfo1 +  $notaInfo2 +  $nota)/3;
- 	    $params->data =$data ;
-	    return $params->save();
+	    $ficha->calificacion = $data['nota'];
+	    $ficha->save();
+ 	    $params->data=$data ;
+	    
     }
 }
