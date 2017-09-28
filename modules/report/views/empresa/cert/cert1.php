@@ -32,11 +32,6 @@
 	$calificacion = number_format( $ficha->params->data['nota']*100);
 	 
 	// semaforo
-	if($calificacion > 69){
-		$aprobado  = $calificacion . '%';
-	}else{
-		$noaprobado = $calificacion . '%';
-	}
 
 	$notaInfo1 =   number_format($ficha->params->data['percepcion']['nota']*100); //tomar nota de controlador
 	// $notaInfo1 = 89;
@@ -54,8 +49,13 @@
 		$textInfo2 = $be;
 	}
 	//$informe 3
- 
-	
+ 	
+	if($calificacion > 69){
+		$aprobado  = $calificacion . '%';
+	}else{
+		$noaprobado = $calificacion . '%';
+	}
+
 	//$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
 
 	$textInfo3 = '';
@@ -130,7 +130,8 @@ switch ($mes) {
 			<br>
 			EMPRESA: <?= upper($trabajador->gerencia) ?>
 			<br>
-			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "REACREDITACIÓN"; ?> : <?= $dia .' '.$mes . ' '. $anio?>
+			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "ACREDITACIÓN"; ?> : <?= $dia .' '.$mes . ' '. $anio; ?>
+			 
 
 
 		</div> 
