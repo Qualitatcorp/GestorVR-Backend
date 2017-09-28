@@ -173,7 +173,7 @@ $config = [
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
                 
                 'GET report/empresa/ficha/<id:\d+>' => 'report/empresa/ficha',
-               'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>',
+                'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>'
                
             ],
         ],
