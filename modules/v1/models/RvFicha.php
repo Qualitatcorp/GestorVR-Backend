@@ -71,6 +71,7 @@ class RvFicha extends \yii\db\ActiveRecord
             'calificacion' => 'Calificacion',
             'pais_id' => 'Pais ID',
             'creado' => 'Creado',
+            
         ];
     }
 
@@ -90,7 +91,10 @@ class RvFicha extends \yii\db\ActiveRecord
             'items',
             'ceim',
             'recursos',
-            'src'
+            'src',
+            'reacreditacion',
+            'notas',
+            'clientcalificacion'
         ];
     }
 
@@ -98,6 +102,7 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return $this->hasOne(RvEvaluacion::className(), ['eva_id' => 'eva_id']);
     }
+
 
     public function getTrabajador()
     {
@@ -117,6 +122,9 @@ class RvFicha extends \yii\db\ActiveRecord
     public function getPais()
     {
         return $this->hasOne(Pais::className(), ['pais_id' => 'pais_id']);
+    }
+    public function getClientcalificacion(){
+          return $this->hasOne(rvClientcalificacion::className(), ['fic_id' => 'fic_id']);
     }
 
     public function getRespuestas()
@@ -158,7 +166,23 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return $this->getRecursos()->andWhere(['tipo'=>'PERFIL']);
     }
+    public function getReacreditacion(){
+        $query = new \yii\db\Query;
+        $query->select('min(creado) as creado')
+            ->from('rv_ficha')
+            ->where(['trab_id' =>  $this->trab_id, 'eva_id' => $this->eva_id ]);        
+        $command = $query->createCommand();
+        $rows = $command->queryAll();
+        if($rows[0]['creado'] == $this->creado){
+            return false;
+        }else{
+            return true;
+        }      
+    }
+    public function getNotas(){
+            return 1;
 
+    }
     public function getCeim()
     {
         // Modificacion Especial para evaluaciones en el sistema
@@ -418,4 +442,5 @@ class RvFicha extends \yii\db\ActiveRecord
             ]
         ];
     }
+
 }
