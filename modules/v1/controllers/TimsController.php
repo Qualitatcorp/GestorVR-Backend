@@ -241,14 +241,16 @@ class TimsController extends  Controller
 		$ficha = RvFicha::find()->andWhere(["fic_id" => $id])->one();
 	    $params = $ficha->params;
 	    $data = $params->data;
-	    $data['riesgo']['nota']=$nota;
 
+	    $data['riesgo']['nota']=$nota;
 	    $notaInfo1 = $data['percepcion']['nota'];
 	    $notaInfo2 = $data['conocimiento']['nota'];
 	    $data['nota'] = ($notaInfo1 +  $notaInfo2 +  $nota)/3;
-	    $ficha->calificacion =   $data['nota'];
+	    
  	    $params->data =$data ;
- 	    $ficha->save();
 	    $params->save();
+
+	    $ficha->calificacion =   $data['nota'];
+ 	    $ficha->save();
     }
 }
