@@ -61,16 +61,7 @@ class UserController extends ActiveController
 
 	public function actionGetidentity()
 	{
-		return \Yii::$app->user->identity->getAttributes([
-			'username',
-			'rut',
-			'nombre',
-			'email',
-			'cargo',
-			'nacimiento',
-			'creacion',
-			'modificacion'
-		]);
+		return \Yii::$app->user->identity;
 	}
 
 	public function actionUpdateidentity()

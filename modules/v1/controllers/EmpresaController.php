@@ -79,11 +79,9 @@ class EmpresaController extends ActiveController
 	}
 
 
-/**
- *
- * Ficha de perteneciente a la emrpesa
- *
- */
+	/*
+	 * 	Modulo de Ficha
+	 */
 
 	public function actionIndexficha()
 	{
@@ -115,7 +113,6 @@ class EmpresaController extends ActiveController
 					}
 				}
 			}
-
 			// return $query->createCommand()->rawSql;
 			$provider = new \yii\data\ActiveDataProvider(['query' => $query]);
 		} catch (Exception $ex) {
@@ -126,6 +123,12 @@ class EmpresaController extends ActiveController
 		} else {
 			return $provider;
 		}
+	}
+
+	public function actionCreateficha()
+	{
+		$request=Yii::$app->request;
+		return $request->post();
 	}
 
 	public function actionViewficha($id)
@@ -142,11 +145,9 @@ class EmpresaController extends ActiveController
 		}
 	}
 
-/**
- *
- * Trabajador de la empresa asignada
- *
- */
+	/*
+	 * Modulo de Trabajador
+	 */
 
 	public function actionIndextrabajador()
 	{
