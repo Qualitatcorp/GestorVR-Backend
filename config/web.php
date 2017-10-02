@@ -64,6 +64,7 @@ $config = [
                         'v1/pais',
                         'v1/rvalternativa',
                         'v1/rvevaluacion',
+                        'v1/rvfichaparams',
                         'v1/rvficharecursos',
                         'v1/rvitem',
                         'v1/rvpregunta',
