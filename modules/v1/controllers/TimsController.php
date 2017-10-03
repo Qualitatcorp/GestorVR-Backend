@@ -106,82 +106,85 @@ class TimsController extends  Controller
 		}
    
 	}
+
 	public function actionView($id){
-		
 
-		$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
-		$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
-      
+		$model=RvFicha::findOne($id);
+		if(!empty($model)){
+			if($model->eva_id!=54){
+				throw new \yii\web\HttpException(404, 'El tipo de evaluacion no es soportado.');
 
-		if($ClientParam){ //verificamos que exista
-			  $results = json_decode($ClientParam->content); //convertimos los datos array
-			  if($results->nota and $results->pdf){ // si existe nota, eval finalizada y actualizada
-			  	$result = json_decode($ClientParam->content);
-				$result = array(
-					'id' => $result->id,
-					'pdf' =>  $result->pdf,
-					'nota' => $result->nota ,
-				);
-				 
-				 
-		 		$this->saveRiesgo(($result['nota']/100),$id);
-				return $result;   	
-			  }else{ //Aca actualiza el codigo desde la db
-		  	    $result = json_decode($ClientParam->content);
-		  		$fields = array(
-		  			 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
-				    //'PcaCod'=> $result->PcaCod,
-					'JcaCods'=> 'f727b6d9-1f65-4daf-9783-44efe154b4db',
-					'RepCod'=> "qua",
-				);
-				$curl_result = $this->curl_post($fields,$urlResult);  //obtenemos los datos de la consulta via post
-				if(gettype($curl_result) === 'object'){
-					$params = array( //seteamos un array que sera nuestro objeto en params
-					'id' =>$curl_result->PerIde,
-					'pdf' => $curl_result->Jca[0]->RepLink,
-					'nota'=> $curl_result->Jca[0]->PjeCom,
-					'url' => $result->url, 
-					'PcaCod' =>$result->PcaCod,  
+			}
+			if(!$model->getParams()->exists()){
+				throw new \yii\web\HttpException(404, 'No existen paramatros para comenzar la evalacion TIMS.');
+			}
+
+			$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
+			$ClientParam = $model->getClientsparams()->one();
+
+			if($ClientParam){ //verificamos que exista
+				  $results = json_decode($ClientParam->content); //convertimos los datos array
+				  if(isset($results->nota) && isset($results->pdf)){ // si existe nota, eval finalizada y actualizada
+				  	$result = json_decode($ClientParam->content);
+					$result = array(
+						'id' => $result->id,
+						'pdf' =>  $result->pdf,
+						'nota' => $result->nota ,
 					);
-					// $params  = json_encode($params); //codificamos los datos a json y lo setiamos
-					$ClientParam->content = json_encode($params);
-					if (!$ClientParam->update()) {    //guardamos en la db, si ocurre algun error, lo mostramos	  				 
-						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
-					}
-					else{
-						$calificacion = RvClientCalificacion::find()->andWhere(["fic_id" => $id])->one();
-						if(!$calificacion){
-							
-							$nota = intval($curl_result->Jca[0]->PjeCom)/100;
-						 	$calificacion = new  RvClientCalificacion; //guardamos la nota
-							$calificacion->fic_id = $id;
-							$calificacion->cli_eva_id = 1 ;
-							$calificacion->calificacion =  $nota;
-							$calificacion->save();
-							// se guardan los datos en la ficha 
-
-
+					 
+					 
+			 		$this->saveRiesgo(($result['nota']/100),$id);
+					return $result;
+				  }else{ //Aca actualiza el codigo desde la db
+			  	    $result = json_decode($ClientParam->content);
+			  		$fields = array(
+			  			// 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
+					    'PcaCod'=> $result->PcaCod,
+						'JcaCods'=> 'f727b6d9-1f65-4daf-9783-44efe154b4db',
+						'RepCod'=> "qua",
+					);
+					$curl_result = $this->curl_post($fields,$urlResult);  //obtenemos los datos de la consulta via post
+					if(gettype($curl_result) === 'object'){
+						$params = array( //seteamos un array que sera nuestro objeto en params
+							'id' =>$curl_result->PerIde,
+							'pdf' => $curl_result->Jca[0]->RepLink,
+							'nota'=> $curl_result->Jca[0]->PjeCom,
+							'url' => $result->url, 
+							'PcaCod' =>$result->PcaCod 
+						);
+						// $params  = json_encode($params); //codificamos los datos a json y lo setiamos
+						$ClientParam->content = json_encode($params);
+						if (!$ClientParam->update()) {    //guardamos en la db, si ocurre algun error, lo mostramos	  				 
+							throw new \yii\web\HttpException(500, 'Error interno del sistema.');
+						}
+						else{
+							$calificacion = RvClientCalificacion::find()->andWhere(["fic_id" => $id])->one();
+							if(!$calificacion){
+								
+								$nota = intval($curl_result->Jca[0]->PjeCom)/100;
+							 	$calificacion = new  RvClientCalificacion; //guardamos la nota
+								$calificacion->fic_id = $id;
+								$calificacion->cli_eva_id = 1 ;
+								$calificacion->calificacion =  $nota;
+								$calificacion->save();
+								// se guardan los datos en la ficha 								
+							}
+							$this->saveRiesgo(($params['nota']/100),$id);
+							//return $nombre_server =  $this->existInExternalServer($result->url); //rescatamos el archivo desde el  
+							return $params;
+							//definir la carpeta donde se guardaran los pdf
 							
 						}
-						$this->saveRiesgo(($params['nota']/100),$id);
-						//return $nombre_server =  $this->existInExternalServer($result->url); //rescatamos el archivo desde el  
-						return $params;
-						//definir la carpeta donde se guardaran los pdf
-						
+					}else{//evaluacion  
+						throw new \yii\web\HttpException(404, 'La evaluacion no ha sido finalizada.');
 					}
-
-				
-
-				}else{//evaluacion  
-					throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
 				}
-			  }
-
- 
-			throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
+			}
+		}else{
+			throw new \yii\web\HttpException(404, 'No existe la ficha.');
 		}
-
 	}
+
 	private function curl_post($fields,$url){ //codigo que curl que crea la comunicacion via post
     	$postvars='';
 		$sep='';

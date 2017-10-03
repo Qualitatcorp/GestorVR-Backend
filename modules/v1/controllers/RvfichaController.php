@@ -29,10 +29,6 @@ class RvfichaController extends ActiveController
 	public function actionEvaluation()
 	{
 		$request=\Yii::$app->request;
-		if(!$request->isPost)
-		{
-			throw new \yii\web\HttpException(405, 'Metodo no permitido.');
-		}
 		/*
 		 *	Resuelve restriccion de Dispositivo
 		 */
@@ -87,17 +83,16 @@ class RvfichaController extends ActiveController
 				{
 					return $respuesta;
 				}
-				/*
-				 * Integracion de Servicios y notas especiales
-				 */
-				switch ($this->eva_id) {
-					case 54:
-						$ficha->timsEva1();
-						break;
-					default:
-
-						break;
-				}
+			}
+			/*
+			 * Integracion de Servicios y notas especiales
+			 */
+			switch ($ficha->eva_id) {
+				case 54:
+					$ficha->timsEva1();
+					break;
+				default:
+					break;
 			}
 			$response=$ficha->getAttributes();
 			$response['respuestas']=$respuestas_save;
