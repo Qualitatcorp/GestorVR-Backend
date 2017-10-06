@@ -18,19 +18,14 @@ class CeimController extends Controller
     }
 
     public function actionSeguridad($id)
-    {   
-        // 17543
-    	//numero de ficha Parametro
+    {
         $ficha = RvFicha::find()->andWhere(["fic_id" => $id, "eva_id" => '50'])->one();
-       
-       
         if(!empty($ficha) ){
             $head = $this->renderPartial('reporte/_head',array('ficha'=>$ficha),true);
             $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/ceim.css');
             $mpdf = new \mPDF();
             // $mpdf->debug = true; 
             $mpdf->charset_in = 'utf-8';
-
             $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$id);
             $mpdf->WriteHTML($style,1);
             $mpdf->WriteHTML($head);
@@ -38,16 +33,5 @@ class CeimController extends Controller
         }else{
             throw new \yii\web\HttpException(404, 'No existen entradas con los parametros propuestos.');
         }
-       
-        
-
-     
-
-		  
-         
-          
-           
-             
     }
-   
 }

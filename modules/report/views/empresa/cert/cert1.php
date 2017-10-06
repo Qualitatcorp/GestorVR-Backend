@@ -1,78 +1,65 @@
-<style type="text/css">
-.aprobado{background-image: url('<?=\Yii::$app->params['BasePathImage']?>aprobado.png');}
-.noaprobado{background-image: url('<?=\Yii::$app->params['BasePathImage']?>noaprobado.png');}
-</style>
 <?php 
-// variables 
-	$aprobado = '';
-	$noaprobado = '';
-	$textInfo1 = '';
-	$nota_test = 30;
-	$logo =  \Yii::$app->params['BasePathImage'].'logo.png';
-	function upper($string){return strtoupper($string);}
-	// persepcion de riesgo
-	$bp ="El trabajador presenta una <strong>Baja</strong> Percepción del riesgo";
-	$ap ="El trabajador presenta una <strong>Alta</strong> Percepción del Riesgo";
-	//concimientos de seguridad
-	$be ="El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento  en Estándares ENAP";
-	$ae ="El trabajador presenta un nivel <strong>Alto</strong> de Conocimientos en Estándares ENAP ";
-	//perfil psioclogico
-	$bps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong> de conducta asociada al riego";  //el trabajador presenta
-	$aps ="El trabajador presenta un perfil <strong> No Adecuado </strong> de conducta asociada al riego";
+$logo = '/images/logo.png'  ;
+function upper($string){
+	return strtoupper($string);
+}
+$bp =  "El trabajador presenta una <strong>Baja</strong> Percepción del riesgo";
+$mp =  "El trabajador presenta una Percepción del riesgo de nivel <strong>Medio</strong>";
+$ap =  "El trabajador presenta una <strong>Adecuada</strong> Percepción del Riesgo";
 
-	if(!$ficha->getParams()->exists()){
-		$ficha->timsEva1();
-	}
-	$params=$ficha->params;
- 	if($params->data['riesgo']['nota'] <>null){
- 		$notaInfo3 =number_format( $params->data['riesgo']['nota']*100);
- 	}else{
- 		$notaInfo3 = null; 
- 	}
-	$trabajador = $ficha->trabajador;
-	$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
-	$evaluacion = $ficha->evaluacion;
-	$ceim = $ficha->ceim;
-	$calificacion = number_format( $params->data['nota']*100);
-	 
-	// semaforo
+$be =  "El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento de seguridad de los estándares MEL";
+$me =  "El trabajador presenta un nivel <strong>Medio</strong> de Conocimientos de seguridad de los estándares MEL";
+$ae =  "El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimientos de Seguridad de los estándares ";
+$trabajador = $ficha->trabajador;
+$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
+$evaluacion = $ficha->evaluacion;
+$ceim = $ficha->ceim;
+$aprobado = '';
+$recomendaciones = '';
+$noaprobado = '';
 
-	$notaInfo1 =   number_format($params->data['percepcion']['nota']*100); //tomar nota de controlador
-	// $notaInfo1 = 89;
-	if($params->data['percepcion']['nota'] > 0.69){
-		$textInfo1 = $ap;
-	}else{
-		$textInfo1 = $bp;
-	}
-	//$informe 2
-	 
-	$notaInfo2 = number_format($params->data['conocimiento']['nota']*100);// tomar prenota de controlador;
-	if($params->data['conocimiento']['nota'] > 0.69){
-		$textInfo2 = $ae;
-	}else{
-		$textInfo2 = $be;
-	}
-	//$informe 3
- 	
-	if($params->data['nota'] > 0.69){
-		$aprobado  = $calificacion . '%';
-	}else{
-		$noaprobado = $calificacion . '%';
-	}
+$calificacion =number_format($ficha->calificacion * 100);
+//$calificacion = 89;
+// semaforo
+if($calificacion > 89){
+	$aprobado  = $calificacion . '%';
+}else if($calificacion >=70 && $calificacion < 90){
+	$recomendaciones = $calificacion . '%';
+}else{
+	$noaprobado = $calificacion . '%';
+}
+//end semaforo
 
-	//$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
+// informe 1
+$textInfo1 = '';
+$notaInfo1 = number_format($ceim['dec_nota'] *100);
+// $notaInfo1 = 89;
+if($notaInfo1 > 89){
+	$textInfo1 = $ap;
+}else if($notaInfo1 >=70 && $notaInfo1 < 90){
+	$textInfo1 = $mp;
+}else{
+	$textInfo1 = $bp;
+}
 
-	$textInfo3 = '';
+//$informe 2
+$textInfo2 = '';
+$notaInfo2 =number_format($ceim['pre_nota'] *100);
+// $notaInfo2 = 90;
+if($notaInfo2 > 89){
+	$textInfo2 = $ae;
+}else if($notaInfo2 >=70 && $notaInfo2 < 90){
+	$textInfo2 = $me;
+}else{
+	$textInfo2 = $be;
+}
 
-	if($notaInfo3 === null){
-		$textInfo3 = "la nota psicologica no se encuentra disponible en estos momentos";
-	}else if($params->data['riesgo']['nota'] > 69){
-		$textInfo3 = $aps;
-	}
-	else{
-		$textInfo3 = $bps;
-	}
-	 
+//Sec_cantidad
+ 
+$sec_cantidad = $ceim['sec_cantidad'];
+if($sec_cantidad > 9){
+	$sec_cantidad = 10;
+} 
 //fecha
 setlocale(LC_TIME, "C");
 $date = new DateTime($ficha->creado);
@@ -105,7 +92,7 @@ switch ($mes) {
 	    $mes="Agosto";
 		break;	
 	case 'September':
-	    $mes="Septiembre";
+	    $mes="Setiembre";
 	break;	
 	case 'October':
 	    $mes="Octubre";
@@ -134,10 +121,7 @@ switch ($mes) {
 			<br>
 			EMPRESA: <?= upper($trabajador->gerencia) ?>
 			<br>
-			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "ACREDITACIÓN"; ?> : <?= $dia .' '.$mes . ' '. $anio; ?>
-			 
-
-
+			FECHA EVALUACIÓN: <?= $dia .' '.$mes . ' '. $anio?>
 		</div> 
 		<!-- aprobado -->
 		<div  class = "margin-top-15">
@@ -150,6 +134,22 @@ switch ($mes) {
 				APROBADO
 			</div>
 		</div>
+		<!-- fin aprobado -->
+
+		<!--  recomendaciones  -->
+		<div>
+			<div class="resultado recomendaciones floatL">
+				<div class = "porcentaje ">
+					 <?= $recomendaciones?>
+				</div>
+			</div>
+			<div class = "descripcion">
+				RECOMENDACIONES
+			</div>
+		</div>
+		<!-- fin recomendaciones -->
+
+		<!-- no aprobado -->
 		<div>
 			<div class="resultado noaprobado floatL">
 				<div class = "porcentaje ">
@@ -160,8 +160,9 @@ switch ($mes) {
 				NO APROBADO
 			</div>
 		</div>
+		<!-- fin no aprobado -->
 		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  1.- Informe Percepción del Riesgo Trabajado </div>
+			<div class="bold">  1.- Informe de Percepción del Riesgo Trabajador   </div>
 			<br>
 			<div class="bold floatL Width20">
 				NOTA: <?= $notaInfo1 ?>  %
@@ -172,15 +173,12 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30">   Número de detección de errores del ambiente: <?=$params->data['percepcion']['pri']['correcto']?>
-					(<?=$params->data['percepcion']['pri']['total']?>)</div>
-				<div class="margin-left-30">   Número de visualización de errores externos al evento:
-				 <?=$params->data['percepcion']['sec']['correcto']?> 
-				 (<?=$params->data['percepcion']['sec']['total']?>) </div>
+				<div class="margin-left-20"> &#8226; Número de detección de errores del ambiente: <?= $ceim['pri_cantidad']?> (12)</div>
+				<div class="margin-left-20"> &#8226; Número de visualización de errores externos al evento: <?= $sec_cantidad ?> (10) </div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  2.- Informe Conocimiento Estándares ENAP   </div>
+			<div class="bold">  2.- Informe de Conocimiento Estándares MEL   </div>
 			<br>
 			<div class="bold floatL Width20">
 				NOTA: <?= $notaInfo2 ?> %
@@ -191,24 +189,11 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  
-					<?=$params->data['conocimiento']['correcto']?> 
-					(<?=$params->data['conocimiento']['total']?>)</div>
+				<div class="margin-left-20">&#8226;	Respuestas Correctas Conocimiento: <?=$ceim['pre_cantidad']?> (20)</div>
+				 
 			</div>
+
 		</div>
-		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  3.- Informe Adecuación al Perfil   </div>
-			<br>
-			<div class="bold floatL Width20">
-				NOTA: <?= $notaInfo3 ?> %
-			</div>
-			<div class="Width40 ">
-				  <?=$textInfo3  ?>  
-			</div>
-			 
-			 
-		</div>
-		<!-- informe 3  fin-->
 	</div>
 
 </body>

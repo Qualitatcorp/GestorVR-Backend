@@ -122,9 +122,10 @@ class Trabajador extends \yii\db\ActiveRecord
         return $this->hasMany(RvFicha::className(), ['trab_id' => 'tra_id']);
     }
 
-    public function getNombreCompleto()
+    public function getNombreCompleto($sort=true)
     {
-        return implode(" ", array($this->paterno,$this->materno,$this->nombre));
+
+        return implode(" ",$sort?array($this->paterno,$this->materno,$this->nombre):array($this->nombre,$this->paterno,$this->materno));
     }
 
     public function getRs()

@@ -12,50 +12,64 @@
 	function upper($string){return strtoupper($string);}
 	// persepcion de riesgo
 	$bp ="El trabajador presenta una <strong>Baja</strong> Percepción del riesgo";
-	$ap ="El trabajador presenta una <strong>alta</strong> Percepción del Riesgo";
+	$ap ="El trabajador presenta una <strong>Alta</strong> Percepción del Riesgo";
 	//concimientos de seguridad
 	$be ="El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento  en Estándares ENAP";
-	$ae ="El trabajador presenta un nivel <strong>Adecuado</strong> de Conocimientos en Estándares ENAP ";
+	$ae ="El trabajador presenta un nivel <strong>Alto</strong> de Conocimientos en Estándares ENAP ";
 	//perfil psioclogico
-	$bps ="El trabajador presenta un perfil psicológico <strong>No Adecuado</strong> para estas funciones";  //el trabajador presenta
-	$aps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong>";
+	$bps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong> de conducta asociada al riego";  //el trabajador presenta
+	$aps ="El trabajador presenta un perfil <strong> No Adecuado </strong> de conducta asociada al riego";
 
-
+	if(!$ficha->getParams()->exists()){
+		$ficha->timsEva1();
+	}
+	$params=$ficha->params;
+ 	if($params->data['riesgo']['nota'] <>null){
+ 		$notaInfo3 =number_format( $params->data['riesgo']['nota']*100);
+ 	}else{
+ 		$notaInfo3 = null; 
+ 	}
 	$trabajador = $ficha->trabajador;
 	$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
 	$evaluacion = $ficha->evaluacion;
 	$ceim = $ficha->ceim;
-	$calificacion = $nota_test;
+	$calificacion = number_format( $params->data['nota']*100);
 	 
 	// semaforo
-	if($calificacion > 69){
-		$aprobado  = $calificacion . '%';
-	}else{
-		$noaprobado = $calificacion . '%';
-	}
 
-	$notaInfo1 =  $nota_test; //tomar nota de controlador
+	$notaInfo1 =   number_format($params->data['percepcion']['nota']*100); //tomar nota de controlador
 	// $notaInfo1 = 89;
-	if($notaInfo1 > 89){
+	if($params->data['percepcion']['nota'] > 0.69){
 		$textInfo1 = $ap;
 	}else{
 		$textInfo1 = $bp;
 	}
 	//$informe 2
 	 
-	$notaInfo2 = $nota_test;// tomar prenota de controlador;
-	if($notaInfo2 > 69){
+	$notaInfo2 = number_format($params->data['conocimiento']['nota']*100);// tomar prenota de controlador;
+	if($params->data['conocimiento']['nota'] > 0.69){
 		$textInfo2 = $ae;
 	}else{
 		$textInfo2 = $be;
 	}
 	//$informe 3
- 
-	 
-	$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
-	if($notaInfo3 > 69){
-		$textInfo3 = $aps;
+ 	
+	if($params->data['nota'] > 0.69){
+		$aprobado  = $calificacion . '%';
 	}else{
+		$noaprobado = $calificacion . '%';
+	}
+
+	//$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
+
+	$textInfo3 = '';
+
+	if($notaInfo3 === null){
+		$textInfo3 = "la nota psicologica no se encuentra disponible en estos momentos";
+	}else if($params->data['riesgo']['nota'] > 69){
+		$textInfo3 = $aps;
+	}
+	else{
 		$textInfo3 = $bps;
 	}
 	 
@@ -91,7 +105,7 @@ switch ($mes) {
 	    $mes="Agosto";
 		break;	
 	case 'September':
-	    $mes="Setiembre";
+	    $mes="Septiembre";
 	break;	
 	case 'October':
 	    $mes="Octubre";
@@ -120,7 +134,8 @@ switch ($mes) {
 			<br>
 			EMPRESA: <?= upper($trabajador->gerencia) ?>
 			<br>
-			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "REACREDITACIÓN"; ?> : <?= $dia .' '.$mes . ' '. $anio?>
+			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "ACREDITACIÓN"; ?> : <?= $dia .' '.$mes . ' '. $anio; ?>
+			 
 
 
 		</div> 
@@ -157,8 +172,11 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30">   Número de detección de errores del ambiente:  xx (12)</div>
-				<div class="margin-left-30">   Número de visualización de errores externos al evento: xx (10) </div>
+				<div class="margin-left-30">   Número de detección de errores del ambiente: <?=$params->data['percepcion']['pri']['correcto']?>
+					(<?=$params->data['percepcion']['pri']['total']?>)</div>
+				<div class="margin-left-30">   Número de visualización de errores externos al evento:
+				 <?=$params->data['percepcion']['sec']['correcto']?> 
+				 (<?=$params->data['percepcion']['sec']['total']?>) </div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
@@ -173,25 +191,21 @@ switch ($mes) {
 			<div class="margin-top-15">
 				Detalle de Informe comparativo sobre el óptimo de:
 				<br>
-				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  xx (20)</div>
+				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  
+					<?=$params->data['conocimiento']['correcto']?> 
+					(<?=$params->data['conocimiento']['total']?>)</div>
 			</div>
 		</div>
 		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  3.- Informe Psicológico   </div>
+			<div class="bold">  3.- Informe Adecuación al Perfil   </div>
 			<br>
 			<div class="bold floatL Width20">
 				NOTA: <?= $notaInfo3 ?> %
 			</div>
 			<div class="Width40 ">
-				<?= $textInfo3 ?> 
-			</div>
-			<div class="margin-top-15">
-				Detalle de Informe comparativo sobre el óptimo de:
-				<br>
-				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento: xx (10)</div> 
+				  <?=$textInfo3  ?>  
 			</div>
 		</div>
-		<!-- informe 3  fin-->
-	</div
+	</div>
 
 </body>

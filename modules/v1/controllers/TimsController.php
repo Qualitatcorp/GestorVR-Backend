@@ -24,11 +24,7 @@ class TimsController extends  Controller
 
 	public function actionIndex()
 	{
-		$ficha = RvFicha::findOne(18378);
 		
-	   
-
-
 	}
  
     public function actionCreate()
@@ -108,19 +104,16 @@ class TimsController extends  Controller
 	}
 
 	public function actionView($id){
-
+		//24
 		$model=RvFicha::findOne($id);
 		if(!empty($model)){
-			if($model->eva_id!=54){
-				throw new \yii\web\HttpException(404, 'El tipo de evaluacion no es soportado.');
-
-			}
-			if(!$model->getParams()->exists()){
-				throw new \yii\web\HttpException(404, 'No existen paramatros para comenzar la evalacion TIMS.');
-			}
+			// if(!$model->getClientsparams()->exists()){
+			// 	throw new \yii\web\HttpException(404, 'No existen paramatros para inscripcion de Evaluacion TIMS.');
+			// }
+			// $ClientParam = $model->getClientsparams()->one();
 
 			$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
-			$ClientParam = $model->getClientsparams()->one();
+			$ClientParam = RvClientParams::findOne(24);
 
 			if($ClientParam){ //verificamos que exista
 				  $results = json_decode($ClientParam->content); //convertimos los datos array
@@ -244,11 +237,13 @@ class TimsController extends  Controller
 		$ficha = RvFicha::find()->andWhere(["fic_id" => $id])->one();
 	    $params = $ficha->params;
 	    $data = $params->data;
+	    
+	    $data['psi_nota']=$nota;
 
-	    $data['riesgo']['nota']=$nota;
-	    $notaInfo1 = $data['percepcion']['nota'];
-	    $notaInfo2 = $data['conocimiento']['nota'];
-	    $data['nota'] = ($notaInfo1 +  $notaInfo2 +  $nota)/3;
+	    $notaInfo1 = $data['dec_nota'];
+	    $notaInfo2 = $data['pre_nota'];
+	    
+	    $data['nota'] = floatval(number_format(($notaInfo1 +  $notaInfo2 +  $nota)/3,2));
 	    
  	    $params->data =$data ;
 	    $params->save();

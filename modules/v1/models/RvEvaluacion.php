@@ -66,7 +66,8 @@ class RvEvaluacion extends \yii\db\ActiveRecord
             'alternativas',
             'clients',
             'clientsTipo',
-            'clientsEva'
+            'clientsEva',
+            'fichas'
         ];
     }
 

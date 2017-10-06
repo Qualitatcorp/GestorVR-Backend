@@ -29,21 +29,7 @@ class RvfichaController extends ActiveController
 	public function actionEvaluation()
 	{
 		$request=\Yii::$app->request;
-		/*
-		 *	Resuelve restriccion de Dispositivo
-		 */
-		$Dispositivo=Dispositivo::findOne($request->post("disp_id"));
-		if($Dispositivo!==null)
-		{
-			if(!$Dispositivo->permission)
-			{
-				throw new \yii\web\HttpException(401, 'Dispositivo no habilitado.');
-			}
-		}
-		else
-		{
-			throw new \yii\web\HttpException(404, 'No Existe el dispositivo.');
-		}
+
 		/*
 		 * Verificacion de Respuestas
 		 */
@@ -66,12 +52,12 @@ class RvfichaController extends ActiveController
 		$ficha->Attributes=$request->post();
 		if($ficha->save())
 		{
+			/*
+			 *	Se agregan las respuestas
+			 */
 			$respuestas_save=array();
 			foreach ($respuestas as $r) 
 			{
-				/*
-				 *	Se Crean las respuestas de la evaluacion
-				 */
 				$respuesta=new RvRespuesta();
 				$respuesta->Attributes=$r;
 				$respuesta->fic_id=$ficha->primaryKey;
@@ -85,15 +71,12 @@ class RvfichaController extends ActiveController
 				}
 			}
 			/*
-			 * Integracion de Servicios y notas especiales
+			 * Calcular la nota o agregacion de dependencias por tipo de evaluacion
 			 */
-			switch ($ficha->eva_id) {
-				case 54:
-					$ficha->timsEva1();
-					break;
-				default:
-					break;
-			}
+			$ficha->Resolve();
+			/*
+			 * Se responde con las respuestas almacenadas
+			 */
 			$response=$ficha->getAttributes();
 			$response['respuestas']=$respuestas_save;
 			return $response;
