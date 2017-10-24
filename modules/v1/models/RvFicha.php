@@ -16,11 +16,12 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return [
             [['eva_id', 'trab_id', 'disp_id'], 'required'],
-            [['eva_id', 'trab_id', 'pro_id', 'disp_id', 'pais_id'], 'integer'],
+            [['eva_id', 'trab_id', 'pro_id', 'disp_id', 'pais_id','con_id'], 'integer'],
             [['calificacion'], 'number'],
             [['creado'], 'safe'],
             [['creado'], 'date', 'format' => 'yyyy-M-d H:m:s'],
             [['eva_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvEvaluacion::className(), 'targetAttribute' => ['eva_id' => 'eva_id']],
+            [['con_id'], 'exist', 'skipOnError' => true, 'targetClass' => EmpresaContratista::className(), 'targetAttribute' => ['con_id' => 'id']],
             [['trab_id'], 'exist', 'skipOnError' => true, 'targetClass' => Trabajador::className(), 'targetAttribute' => ['trab_id' => 'tra_id']],
             [['pro_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvProyecto::className(), 'targetAttribute' => ['pro_id' => 'pro_id']],
             [['disp_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dispositivo::className(), 'targetAttribute' => ['disp_id' => 'dis_id']],
@@ -32,16 +33,35 @@ class RvFicha extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'fic_id' => 'Fic ID',
-            'eva_id' => 'Eva ID',
-            'trab_id' => 'Trab ID',
-            'pro_id' => 'Pro ID',
-            'disp_id' => 'Disp ID',
+            'fic_id' => 'Ficha',
+            'eva_id' => 'Evaluación',
+            'trab_id' => 'Trabajador',
+            'con_id' => 'Contratista',
+            'pro_id' => 'Proyecto',
+            'disp_id' => 'Dispositivo',
             'calificacion' => 'Calificacion',
-            'pais_id' => 'Pais ID',
+            'pais_id' => 'Pais',
             'creado' => 'Creado',
             
         ];
+    }
+
+    public function fields()
+    {
+    	return [
+    	    'fic_id',
+            'eva_id',
+            'trab_id',
+            'con_id',
+            'pro_id',
+            'disp_id',
+            'calificacion'=>function()
+            {
+            	return floatval($this->calificacion);
+            },
+            'pais_id',
+            'creado'
+    	];
     }
 
     public function extraFields()
@@ -54,6 +74,7 @@ class RvFicha extends \yii\db\ActiveRecord
             'proyecto',
             'dispositivo',
             'empresa',
+            'contratista',
             'pais',
             'preguntas',
             'alternativas',
@@ -65,6 +86,7 @@ class RvFicha extends \yii\db\ActiveRecord
             'reacreditacion',
             'clientscalificacion',
             'clientsparams',
+            'clients',
             'summary'
         ];
     }
@@ -105,6 +127,10 @@ class RvFicha extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Empresa::className(), ['emp_id' => 'emp_id'])->via('dispositivo');
     }
+    public function getContratista()
+    {
+        return $this->hasOne(EmpresaContratista::className(), ['id' => 'con_id']);
+    }
 
     public function getPais()
     {
@@ -112,11 +138,16 @@ class RvFicha extends \yii\db\ActiveRecord
     }
 
     public function getClientscalificacion(){
-          return $this->hasMany(RvClientCalificacion::className(), ['fic_id' => 'fic_id']);
+        return $this->hasMany(RvClientCalificacion::className(), ['fic_id' => 'fic_id']);
     }
 
     public function getClientsparams(){
-          return $this->hasMany(RvClientParams::className(), ['fic_id' => 'fic_id']);
+        return $this->hasMany(RvClientParams::className(), ['fic_id' => 'fic_id']);
+    }    
+
+    public function getClients(){
+        // return "hola";
+        return $this->hasMany(RvClientEvaluacion::className(),['id'=>'cli_eva_id'])->via('clientsparams');
     }
 
     public function getRespuestas()
@@ -185,6 +216,7 @@ class RvFicha extends \yii\db\ActiveRecord
             case 'INTERNA_PLANA':
             case 'EXTERNA_SIMPLE':
             case 'EXTERNA_COMPLEJA':
+                break;
             case 'COMPUESTA_SIMPLE':
                 break;
             case 'INTERNA_SIMPLE':
@@ -267,10 +299,9 @@ class RvFicha extends \yii\db\ActiveRecord
                     $params->data=$data;
                     $params->save();
                     $this->calificacion=$nota;
-                    $this->save();
+                    if($params->save()){}else{}
                     break;
                 case 53:
-                case 54:
                     $dec_nota=($data['PRINCIPAL']['acierto']/$data['PRINCIPAL']['total'])*0.75
                              +($data['SECUNDARIO']['acierto']/$data['SECUNDARIO']['total'])*0.15
                              +($data['DISTRACTOR']['acierto']/$data['DISTRACTOR']['total'])*0.1;                             
@@ -282,7 +313,26 @@ class RvFicha extends \yii\db\ActiveRecord
                     $params->data=$data;
                     $params->save();
                     $this->calificacion=$nota;
-                    $this->save();
+                    if($params->save()){}else{}
+                    break;
+                case 54:
+                    /*
+                     * Fix faltantes suma acierto 
+                     */
+                    $faltantes=$data['PREGUNTA']['total']-20;
+                    $data['PREGUNTA']['total']=20;
+                    $data['PREGUNTA']['acierto']+=$faltantes;
+                    $data['SIN_PRE']=$faltantes;
+                    
+                    $dec_nota=($data['PRINCIPAL']['acierto']/$data['PRINCIPAL']['total'])*0.75
+                             +($data['SECUNDARIO']['acierto']/$data['SECUNDARIO']['total'])*0.15
+                             +($data['DISTRACTOR']['acierto']/$data['DISTRACTOR']['total'])*0.1;                             
+                    $pre_nota=$data['PREGUNTA']['acierto']/$data['PREGUNTA']['total'];
+                    $nota=(float)number_format(($dec_nota+$pre_nota)/2,2);
+                    $data['dec_nota']=(float)number_format($dec_nota,2);
+                    $data['pre_nota']=(float)number_format($pre_nota,2);
+                    $params->data=$data;
+                    if($params->save()){}else{}   
                     break;
                 default:
                     break;

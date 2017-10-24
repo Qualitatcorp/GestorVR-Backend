@@ -2,24 +2,23 @@
 
 namespace app\modules\v1\models;
 
-use Yii;
-
-class RvFichaParams extends \yii\db\ActiveRecord
+class AnalitycsAppParams extends \yii\db\ActiveRecord
 {
     public static function tableName()
     {
-        return 'rv_ficha_params';
+        return 'analitycs_app_params';
     }
 
     public function rules()
     {
         return [
-            [['fic_id', 'type', 'content'], 'required'],
-            [['fic_id'], 'integer'],
+            [['app_id', 'name', 'type', 'content'], 'required'],
+            [['app_id'], 'integer'],
             [['type', 'content'], 'string'],
             [['creado', 'modificado'], 'safe'],
-            [['fic_id'], 'unique'],
-            [['fic_id'], 'exist', 'skipOnError' => true, 'targetClass' => RvFicha::className(), 'targetAttribute' => ['fic_id' => 'fic_id']],
+            [['name', 'className'], 'string', 'max' => 128],
+            [['app_id', 'name'], 'unique', 'targetAttribute' => ['app_id', 'name'], 'message' => 'The combination of App ID and Name has already been taken.'],
+            [['app_id'], 'exist', 'skipOnError' => true, 'targetClass' => AnalitycsApp::className(), 'targetAttribute' => ['app_id' => 'id']],
         ];
     }
 
@@ -27,7 +26,9 @@ class RvFichaParams extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'fic_id' => 'Fic ID',
+            'app_id' => 'App ID',
+            'name' => 'Name',
+            'className' => 'ClassName',
             'type' => 'Type',
             'content' => 'Content',
             'creado' => 'Creado',
@@ -37,15 +38,28 @@ class RvFichaParams extends \yii\db\ActiveRecord
 
     public function fields()
     {
-        $fields = parent::fields();
-        unset($fields['content']);
-        $fields[]='data';
-        return $fields;
+        return [
+            'modificado'
+        ];
     }
 
-    public function getFicha()
+    public function extraFields()
     {
-        return $this->hasOne(RvFicha::className(), ['fic_id' => 'fic_id']);
+        return [
+            'creado',
+            'id',
+            'app_id',
+            'name',
+            'className',
+            'type',
+            'content',
+            'data'
+        ];
+    }
+
+    public function getApp()
+    {
+        return $this->hasOne(AnalitycsApp::className(), ['id' => 'app_id']);
     }
 
     public function getData()

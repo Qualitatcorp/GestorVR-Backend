@@ -72,14 +72,12 @@ class EmpresaController extends Controller
         /*
          * Evaluación NORMAL 
          */       
-        $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/bootstrap.cerulean.min.css');
-
         $mpdf = new \mPDF('utf-8','Letter');
         $mpdf->title="Ficha de evaluación";
         $mpdf->charset_in = 'utf-8';
         // $mpdf->debug = true; 
         $mpdf->setFooter('Página {PAGENO}');
-        $mpdf->WriteHTML($style,1);
+        $mpdf->WriteHTML(file_get_contents( \Yii::getAlias('@webroot').'/css/bootstrap.cerulean.min.css'),1);
         $mpdf->WriteHTML($this->renderPartial('ficha/normal',['model'=>$ficha],true));
         // $mpdf->SetProtection(array('print', 'print-highres'), 'contraseña', md5(time()), 128);
         // $mpdf->autoScriptToLang = true;
@@ -92,13 +90,13 @@ class EmpresaController extends Controller
         /*
          * Evaluación 50  
          */
-        $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/ceim.css');
+        // $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/ceim.css');
+        // $mpdf->WriteHTML($style,1);
         
         $mpdf = new \mPDF();
         // $mpdf->debug = true; 
         $mpdf->charset_in = 'utf-8';
         $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$ficha->primaryKey);
-        $mpdf->WriteHTML($style,1);
         $mpdf->WriteHTML($this->renderPartial('cert/cert1',array('ficha'=>$ficha),true));
         $mpdf->Output('FICHA Nro. '.$ficha->primaryKey.'.pdf','I');
     }

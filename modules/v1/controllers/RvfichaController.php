@@ -29,7 +29,21 @@ class RvfichaController extends ActiveController
 	public function actionEvaluation()
 	{
 		$request=\Yii::$app->request;
-
+		/*
+		 *	Resuelve restriccion de Dispositivo
+		 */
+		$Dispositivo=Dispositivo::findOne($request->post("disp_id"));
+		if($Dispositivo!==null)
+		{
+			if(!$Dispositivo->permission)
+			{
+				throw new \yii\web\HttpException(401, 'Dispositivo no habilitado.');
+			}
+		}
+		else
+		{
+			throw new \yii\web\HttpException(404, 'No Existe el dispositivo : '+$request->post("disp_id"));
+		}
 		/*
 		 * Verificacion de Respuestas
 		 */
@@ -53,7 +67,7 @@ class RvfichaController extends ActiveController
 		if($ficha->save())
 		{
 			/*
-			 *	Se agregan las respuestas
+			 *	Se Crean las respuestas de la evaluacion
 			 */
 			$respuestas_save=array();
 			foreach ($respuestas as $r) 
@@ -69,6 +83,15 @@ class RvfichaController extends ActiveController
 				{
 					return $respuesta;
 				}
+			}			/*
+			 *	Se Crean los parametros si existen
+			 */
+			$params=$request->post('params');
+			if(!empty($params))
+			{
+				$parametro=new RvFichaParams();
+				$parametro->Attributes=$params;
+				$parametro->save();
 			}
 			/*
 			 * Calcular la nota o agregacion de dependencias por tipo de evaluacion
@@ -91,10 +114,20 @@ class RvfichaController extends ActiveController
 	{
 		if (!empty($_GET)) {
 			$request=\Yii::$app->request;
-			$reserve=['per-page','sort','page','expand','expand','fields'];
+			$reserve=[
+				'per-page',
+				'sort',
+				'page',
+				'expand',
+				'expand',
+				'fields'
+			];
+			$extraJoin=[
+				'emp_id'
+			];
 			$model = new $this->modelClass;
 			foreach ($_GET as $key => $value) {
-				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)) {
+				if (!$model->hasAttribute($key)&&!in_array($key,$reserve)&&!in_array($key,$extraJoin)) {
 					throw new \yii\web\HttpException(404, 'Atributo invalido :' . $key);
 				}
 			}
@@ -103,14 +136,23 @@ class RvfichaController extends ActiveController
 			   	$range=['id'];
 				foreach ($_GET as $key => $value) {
 					if(!in_array($key,$reserve)){
-						if (in_array($key,$range)) {
-							$limit = explode('-',$value);
-							$query->andWhere(['between', $key,$limit[0],$limit[1]]);
+						if (in_array($key,$extraJoin)) {
+							switch ($key) {
+								case 'emp_id':
+									$query->joinWith('dispositivo')->andWhere(['dispositivo.emp_id'=>$value]);
+									break;
+							}
 						}else{
-							$query->andWhere(['like', $key, $value]);
+							if (in_array($key,$range)) {
+								$limit = explode('-',$value);
+								$query->andWhere(['between', $key,$limit[0],$limit[1]]);
+							}else{
+								$query->andWhere(['like', $key, $value]);
+							}	
 						}
 					}
 				}
+				// return $query->createCommand()->rawSql;
 				$provider = new \yii\data\ActiveDataProvider(['query' => $query]);
 			} catch (Exception $ex) {
 				throw new \yii\web\HttpException(500, 'Error interno del sistema.');

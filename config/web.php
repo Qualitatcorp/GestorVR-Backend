@@ -57,6 +57,7 @@ $config = [
                     'controller' => [
                         'v1/comuna',
                         'v1/empresadispositivo',
+                        'v1/empresacontratista',
                         'v1/empresauser',
                         'v1/licencia',
                         'v1/licenciaregistro',
@@ -84,6 +85,7 @@ $config = [
                         'v1/rvintevaluacion',
                         'v1/rvintpregunta',
                         'v1/tims',
+                        'v1/analitycsappparams',
                         'v1/analitycsbitacora',
                         'v1/analitycsbitacoraempresa',
                         'v1/analitycsbitacoratrabajador',
@@ -174,8 +176,7 @@ $config = [
                 // 'GET <ns:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'=>'<ns>/<controller>/<action>',
                 
                 'GET report/empresa/ficha/<id:\d+>' => 'report/empresa/ficha',
-                'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>'
-               
+               'GET report/ceim/<action:\w+>/<id:\d+>' => 'report/ceim/<action>'
             ],
         ],
 
@@ -196,7 +197,7 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        'allowedIPs' => ['127.0.0.1', '::1','201.215.22.66'],
+        'allowedIPs' => ['190.47.84.11'],
     ];
 
     $config['bootstrap'][] = 'gii';

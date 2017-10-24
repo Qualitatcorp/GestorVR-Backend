@@ -28,16 +28,20 @@ class TimsController extends  Controller
 	}
  
     public function actionCreate()
-	{   //paramatro de entrada fic_id
+	{   
 		$post = \Yii::$app->request->post();
-		if(isset( $post['fic_id']) ){ // fic 17543
+		if(isset($post['fic_id']) )
+		{
 			$id = $post['fic_id'];
 			$urlInscripcion = "https://timshr.com/pca2/core/api/WS/AddPca";
-			$ficha = RvFicha::find()->andWhere(["fic_id" => $id])->one();
+			$ficha = RvFicha::findOne($id);
+			/*
+			 *	Verifica que la ficha exista
+			 */
 			if($ficha){
 				$tra = $ficha->trabajador;
 				$sexo = $tra->sexo;
-				switch ($sexo) { // que hacer en caso de que el sexo no se encuentre registrado
+				switch ($sexo) {
 					case 'MASCULINO':
 					$sexoL = 'M';
 					break;
@@ -48,18 +52,24 @@ class TimsController extends  Controller
 					$sexoL = 'M'; 
 					break;
 				}
-				$fields = array(	        
-					'CoKey'=> "5ccf4857-2691-4eaf-b2e0-f7d42375691c",
-					'PerNom'=>  $tra->nombre,
-					'PerPriApe'=> $tra->paterno,
-					'PerSegApe'=> $tra->materno,
-					'PerNumIde'=> $ficha->fic_id,
-					'PerGen'=>  $sexoL,
-					'CoRegCod'=> "es-cl",
-					'PcaTip'=> "D"
-				);
-				$ClientParam = RvClientParams::find()->andWhere(["fic_id" => $id])->one();
+				/*
+				 *	Verifica si ya existe una inscripcion en TIMS
+				 */
+				$ClientParam = $ficha->getClientsparams()->one();
 				if(!$ClientParam){//si no existe registramos una nueva
+					/*
+					 *	Parametros para enviar al servicio de TIMS
+					 */
+					$fields = array(	        
+						'CoKey'=> "5ccf4857-2691-4eaf-b2e0-f7d42375691c",
+						'PerNom'=>  empty($tra->nombre)?"SIN NOMBRE":$tra->nombre,
+						'PerPriApe'=> empty($tra->paterno)?"SIN PATERNO":$tra->paterno,
+						'PerSegApe'=> $tra->materno,
+						'PerNumIde'=> $ficha->fic_id,
+						'PerGen'=>  $sexoL,
+						'CoRegCod'=> "es-cl",
+						'PcaTip'=> "D"
+					);
 					$result = $this->curl_post($fields,$urlInscripcion);
 					if(gettype($result) === 'object'){// verificar que se devuelva la informacion correpondiente
 						//  Al inscribir retorna  dos codigos
@@ -74,20 +84,23 @@ class TimsController extends  Controller
 						$params = json_encode($params);
 						$ClientParam = new RvClientParams;		
 						$ClientParam->fic_id = $id;
+						/*
+						 * El cliente a la cual se le agrega la evaluacion es el 1
+						 */
 						$ClientParam->cli_eva_id = '1';
-						$ClientParam->type = 'json';
 						$ClientParam->content =  $params;
+						$ClientParam->type="object";
 						$ClientParam->save();
-						$result = json_decode($ClientParam->content); 
+						$result = $ClientParam->data; 
 	                    $result = array('id' => $result->id,'url' =>$result->url);
 	                    return  $result ;
 					}else{
-						throw new \yii\web\HttpException(500, 'Error interno del sistema.');
+						throw new \yii\web\HttpException(422, $result);
 					}
 				}else{ // si existe la rescatamos
-					$result = json_decode($ClientParam->content); 
+					$result = $ClientParam->data; 
 				    $result = array(
-				    	'id' => $result->id,
+				    	'fic_id' => $result->id,
 				    	'url' =>$result->url,
 				    	'pdf'=>$result->pdf,
 				    	'nota'=>$result->nota
@@ -107,18 +120,18 @@ class TimsController extends  Controller
 		//24
 		$model=RvFicha::findOne($id);
 		if(!empty($model)){
-			// if(!$model->getClientsparams()->exists()){
-			// 	throw new \yii\web\HttpException(404, 'No existen paramatros para inscripcion de Evaluacion TIMS.');
-			// }
-			// $ClientParam = $model->getClientsparams()->one();
+			if(!$model->getClientsparams()->exists()){
+				throw new \yii\web\HttpException(404, 'No existen paramatros para inscripcion de Evaluacion TIMS.');
+			}
+			$ClientParam = $model->getClientsparams()->one();
+			// $ClientParam = RvClientParams::findOne(24);
 
 			$urlResult = 'https://timshr.com/pca2/core/api/WS/GetPcaVsJcaResult';
-			$ClientParam = RvClientParams::findOne(24);
 
 			if($ClientParam){ //verificamos que exista
-				  $results = json_decode($ClientParam->content); //convertimos los datos array
+				  $results = $ClientParam->data; //convertimos los datos array
 				  if(isset($results->nota) && isset($results->pdf)){ // si existe nota, eval finalizada y actualizada
-				  	$result = json_decode($ClientParam->content);
+				  	$result = $ClientParam->data;
 					$result = array(
 						'id' => $result->id,
 						'pdf' =>  $result->pdf,
@@ -129,7 +142,7 @@ class TimsController extends  Controller
 			 		$this->saveRiesgo(($result['nota']/100),$id);
 					return $result;
 				  }else{ //Aca actualiza el codigo desde la db
-			  	    $result = json_decode($ClientParam->content);
+			  	    $result = $ClientParam->data;
 			  		$fields = array(
 			  			// 'PcaCod'=> '6f9004ac-264a-4aff-9900-947ab6e11987', //parametrisamos la consulta curl
 					    'PcaCod'=> $result->PcaCod,

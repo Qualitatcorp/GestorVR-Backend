@@ -98,7 +98,6 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'user_id'=>$this->primaryKey,
             'client_id'=>$client->primaryKey
         ];
-        
         if($Authentication->save()){
             return $Authentication;       
         }else{

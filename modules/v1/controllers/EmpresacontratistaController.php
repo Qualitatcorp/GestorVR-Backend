@@ -4,9 +4,9 @@ namespace app\modules\v1\controllers;
 
 use yii\rest\ActiveController;
 
-class EmpresauserController extends ActiveController
+class EmpresacontratistaController extends ActiveController
 {
-	public $modelClass = 'app\modules\v1\models\EmpresaUser';
+	public $modelClass = 'app\modules\v1\models\EmpresaContratista';
 
 	public function behaviors()
 	{

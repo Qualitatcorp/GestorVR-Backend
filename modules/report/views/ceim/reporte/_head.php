@@ -92,7 +92,7 @@ switch ($mes) {
 	    $mes="Agosto";
 		break;	
 	case 'September':
-	    $mes="Setiembre";
+	    $mes="Septiembre";
 	break;	
 	case 'October':
 	    $mes="Octubre";
@@ -162,7 +162,7 @@ switch ($mes) {
 		</div>
 		<!-- fin no aprobado -->
 		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  1.- Informe de y Percepción del Riesgo Trabajador   </div>
+			<div class="bold">  1.- Informe de Percepción del Riesgo Trabajador   </div>
 			<br>
 			<div class="bold floatL Width20">
 				NOTA: <?= $notaInfo1 ?>  %
@@ -200,6 +200,6 @@ switch ($mes) {
  
 ?>
 </pre>
-	</div
+	</div>
 
 </body>

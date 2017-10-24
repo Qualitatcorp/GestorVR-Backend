@@ -22,8 +22,6 @@ class Authorization extends ActionFilter
 		}
 		public static function CheckAccess($user_id=null,$resource=null)
 		{
-			// return true;
-			
 			if(empty($resource)){
 				if(empty($user_id)){
 					$user_id=Yii::$app->user->id;
@@ -36,10 +34,18 @@ class Authorization extends ActionFilter
 				}
 			}
 			static::registerResource($resource);
-			return Yii::$app->db->createCommand("CALL sp_access_resource_user(:user_id, :resource)")
+
+			$respuesta = Yii::$app->db->createCommand("CALL sp_access_resource_user(:user_id, :resource)")
 							->bindValue(':user_id' , $user_id)
 							->bindValue(':resource',static::SerializeResource($resource))
 							->queryOne()['PERMISSION']==='ALLOW';
+			if($respuesta){
+				return true;
+			}
+			else{
+					throw new ForbiddenHttpException(static::SerializeResource($resource));
+
+			}
 		}
 
 		public static function SerializeResource($resource)
