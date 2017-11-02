@@ -3,14 +3,21 @@
 namespace app\modules\report\controllers;
 
 use yii\web\Controller;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\HttpBearerAuth;
+use yii\filters\auth\QueryParamAuth;
 
 class EmpresaController extends Controller
 {
     public function behaviors()
     {
         return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
-            'authenticator'=>[
-                'class' => \yii\filters\auth\HttpBearerAuth::className()  
+            'authenticator'=>[        
+                'class' => CompositeAuth::className(),
+                'authMethods' => [
+                    HttpBearerAuth::className(),
+                    QueryParamAuth::className(),
+                ],
             ],
             'authorization'=>[
                 'class' => \app\components\Authorization::className(),
@@ -57,14 +64,30 @@ class EmpresaController extends Controller
                     break;
                 case 'CERT_3':
                     $this->cert3($ficha);
+                case 'EXTINTOR_1':
+                    $this->extintor1($ficha);
                     break;
-                break;
                 case 'NO':
                 default:
                     throw new \yii\web\HttpException(404, 'Esta evaluación, no tiene reporte.');
                 break;
             }
         }
+    }
+
+    public function extintor1($ficha)
+    {
+        /*
+         * Evaluación 57 | 18717 
+         */
+        
+        $mpdf = new \mPDF('utf-8', array(148,297),0,'',6.8,6.5);
+        $mpdf->debug = true; 
+        $mpdf->SetTitle('Reporte VR Firex '.$ficha->primaryKey);
+        $mpdf->WriteHTML($this->renderPartial('extintor/reporte1',array('ficha'=>$ficha),true));
+        $mpdf->WriteText(500,500,"hola");
+        // $mpdf->Image('img/reporte/extintor/fondo_01.jpg', 0, 0, 144, 297, 'jpg', '', true, false);
+        $mpdf->Output('FICHA Nro. '.$ficha->primaryKey.'.pdf','I');
     }
 
     private function normal($ficha)

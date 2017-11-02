@@ -98,7 +98,7 @@ class RvFicha extends \yii\db\ActiveRecord
         {
             if(!$dispositivo->permission)
             {
-                $this->addError($attribute,'El dispositivo, no se encuentra habilitado');
+                $this->addError($attribute,'El dispositivo '.$dispositivo->primaryKey.', no se encuentra habilitado');
             }
         }
     }

@@ -9,6 +9,7 @@ use app\modules\v1\models\RvFicha;
 use app\modules\v1\models\RvFichaParams;
 use app\modules\v1\models\RvAlternativa;
 use app\modules\v1\models\RvRespuesta;
+use app\modules\v1\models\Trabajador;
 
 class RvfichaController extends ActiveController
 {
@@ -28,85 +29,148 @@ class RvfichaController extends ActiveController
 
 	public function actionEvaluation()
 	{
-		$request=\Yii::$app->request;
-		/*
-		 *	Resuelve restriccion de Dispositivo
-		 */
-		$Dispositivo=Dispositivo::findOne($request->post("disp_id"));
-		if($Dispositivo!==null)
-		{
-			if(!$Dispositivo->permission)
-			{
-				throw new \yii\web\HttpException(401, 'Dispositivo no habilitado.');
-			}
-		}
-		else
-		{
-			throw new \yii\web\HttpException(404, 'No Existe el dispositivo : '+$request->post("disp_id"));
-		}
-		/*
-		 * Verificacion de Respuestas
-		 */
 
-		$respuestas=$request->post('respuestas',null);
-		if($respuestas!==null)
-		{
-			if(RvAlternativa::find()->where(['IN','alt_id',array_column($respuestas,'alt_id')])->count()!=count($respuestas)){
-				throw new \yii\web\HttpException(404, 'La evaluacion no tiene respuestas validas.'.RvAlternativa::find()->where(['IN','alt_id',array_column($respuestas,'alt_id')])->count().count($respuestas));
-			}
-		}
-		else
-		{
-			throw new \yii\web\HttpException(404, 'La evaluacion no tiene respuestas.');
-		}
-		/*
-		 * Creacion de Evaluación y respuestas
-		 */
+		$request=\Yii::$app->request;
 		$ficha=new RvFicha();
 		$ficha->Attributes=$request->post();
-		if($ficha->save())
+		$respuestas=$request->post('respuestas');
+		$params=$request->post('params');
+
+		/*
+		 *	Resuelve Trabajador
+		 */
+		$postTrabajador=$request->post('trabajador');
+		if($ficha->trab_id)
 		{
 			/*
-			 *	Se Crean las respuestas de la evaluacion
+			 *	Si se concoce al trabajador se actualiza
 			 */
-			$respuestas_save=array();
-			foreach ($respuestas as $r) 
-			{
-				$respuesta=new RvRespuesta();
-				$respuesta->Attributes=$r;
-				$respuesta->fic_id=$ficha->primaryKey;
-				if($respuesta->save())
-				{
-					$respuestas_save[]=$respuesta;
-				}
-				else
-				{
-					return $respuesta;
-				}
-			}			/*
-			 *	Se Crean los parametros si existen
-			 */
-			$params=$request->post('params');
-			if(!empty($params))
-			{
-				$parametro=new RvFichaParams();
-				$parametro->Attributes=$params;
-				$parametro->save();
+			if($postTrabajador){
+				$trabajador=$ficha->trabajador;
+				$trabajador->Attributes=$postTrabajador;
+				$trabajador->save();
 			}
-			/*
-			 * Calcular la nota o agregacion de dependencias por tipo de evaluacion
-			 */
-			$ficha->Resolve();
-			/*
-			 * Se responde con las respuestas almacenadas
-			 */
-			$response=$ficha->getAttributes();
-			$response['respuestas']=$respuestas_save;
-			return $response;
 		}
 		else
 		{
+			/*
+			 *	Si no se le a asignado un trabajador pero tiene informacion del trabajador
+			 */
+			if($postTrabajador)
+			{
+				$trabajador=Trabajador::findIdentity($postTrabajador);
+				if(!$trabajador)
+				{
+					$trabajador=new Trabajador();
+				}
+				$trabajador->Attributes=$postTrabajador;
+				$trabajador->save();
+				$ficha->trab_id=$trabajador->primaryKey;
+			}
+		}
+
+		/*
+		 *	Validacion de Ficha de evaluacion
+		 */
+		$ficha->validate();
+		
+		/*
+		 *	Validacion del contenido de la ficha de evaluacion
+		 */
+		$evaluacion=$ficha->evaluacion;
+		if($evaluacion)
+		{
+			switch ($evaluacion->nota)
+			{
+				case 'INTERNA_SIMPLE':
+				case 'INTERNA_COMPLEJA':
+				case 'COMPUESTA_SIMPLE':
+				case 'COMPUESTA_COMPLEJA':
+					if(empty($respuestas))
+						$ficha->addError('respuestas','La evaluacion no tiene respuestas.');
+				break;
+				case 'EXTERNA_SIMPLE':
+				case 'EXTERNA_COMPLEJA':
+					if(empty($params))
+						$ficha->addError('params','La evaluacion no tiene parametros para generar la evaluacion.');
+				break;
+				case 'EXTERNA_PLANA':
+				break;
+			}
+		}
+
+		/*
+		 *	Validacion de las respuestas en caso de que tenga
+		 */
+		if($respuestas)
+		{
+			$alternativas=$evaluacion->alternativas;
+			$result=array_diff(array_column($respuestas, 'alt_id'), array_column($alternativas, 'alt_id'));
+			if($result)
+			{
+				$ficha->addError('respuestas','Las alternativas : ('.implode(',',$result).') son invalidas.');
+			}
+		}
+
+		/*
+		 *	Procede a la creacion de una evaluacion en caso de no contenga ningun error
+		 */
+
+		if($ficha->hasErrors())
+		{
 			return $ficha;
+		}
+		else
+		{
+			/*
+			 * Creacion de la ficha
+			 */
+			if($ficha->save())
+			{
+
+				/*
+				 *	Se Crean las respuestas de la evaluacion si existen
+				 */
+				if($respuestas){
+					foreach ($respuestas as $r) 
+					{
+						$respuesta=new RvRespuesta();
+						$respuesta->Attributes=$r;
+						$respuesta->fic_id=$ficha->primaryKey;
+						if(!$respuesta->save())
+						{
+							return $respuesta;
+						}
+					}
+				}
+
+				/*
+				 *	Se Crean los parametros si existen
+				 */
+				if($params)
+				{
+					$parametros=new RvFichaParams();
+					$parametros->Attributes=$params;
+					$parametros->fic_id=$ficha->primaryKey;
+					if(!$parametros->save())
+					{
+						return $parametros;
+					}
+				}
+
+				/*
+				 * Calcular la nota o agregacion de dependencias por tipo de evaluacion
+				 */
+				$ficha->Resolve();
+				/*
+				 * Termino de rutina
+				 */
+				return $ficha;
+			}
+			else
+			{
+				return $ficha;
+			}
 		}
 	}
 

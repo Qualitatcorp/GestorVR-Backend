@@ -4,27 +4,6 @@ namespace app\modules\v1\models;
 
 use Yii;
 
-/**
- * This is the model class for table "trabajador".
- *
- * @property string $tra_id
- * @property string $rut
- * @property string $nombre
- * @property string $paterno
- * @property string $materno
- * @property string $nacimiento
- * @property string $fono
- * @property string $mail
- * @property string $gerencia
- * @property string $cargo
- * @property integer $antiguedad
- * @property string $estado_civil
- * @property integer $hijos
- * @property string $creacion
- * @property string $modificado
- *
- * @property RvFicha[] $rvFichas
- */
 class Trabajador extends \yii\db\ActiveRecord
 {
 
@@ -136,5 +115,18 @@ class Trabajador extends \yii\db\ActiveRecord
     public function getSrc()
     {
         return $this->hasMany(RecursosSources::className(), ['id' => 'src_id'])->via('rs');
+    }
+
+    public static function findIdentity($search)
+    {
+        $model=array();
+        if(isset($search['rut'])){
+            $model=static::findOne(['rut'=>$search['rut']]);
+        }
+        else
+        {
+            $model=static::findOne($search);
+        }        
+        return $model;
     }
 }
