@@ -76,7 +76,8 @@ class Empresa extends \yii\db\ActiveRecord
             'trabajadores',
             'paises',
             'proyectos',
-            'evaluaciones'
+            'evaluaciones',
+            'fichaParams'
         ];
     }
 
@@ -113,6 +114,11 @@ class Empresa extends \yii\db\ActiveRecord
     public function getFichas()
     {
         return $this->hasMany(RvFicha::className(),['disp_id'=>'dis_id'])->via('dispositivos');
+    }
+    
+    public function getFichaParams()
+    {
+        return $this->hasMany(RvFichaParams::className(),['fic_id'=>'fic_id'])->via('fichas');
     }
 
     public function getTrabajadores()

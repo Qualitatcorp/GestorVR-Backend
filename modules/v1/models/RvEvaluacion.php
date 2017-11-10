@@ -90,9 +90,15 @@ class RvEvaluacion extends \yii\db\ActiveRecord
     {
         return $this->hasOne(RvTipo::className(), ['tev_id' => 'tev_id']);
     } 
+
     public function getFichas()
     {
         return $this->hasMany(RvFicha::className(), ['eva_id' => 'eva_id']);
+    }
+
+    public function getTrabajadores()
+    {
+        return $this->hasMany(Trabajador::className(), ['tra_id' => 'trab_id'])->via('fichas');
     }
 
     public function getInternacional()

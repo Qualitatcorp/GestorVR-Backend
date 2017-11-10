@@ -24,13 +24,20 @@ class TrabajadorController extends ActiveController
 	{
 		$request=\Yii::$app->request;
 		$post=$request->post();
-		$trabajador=Trabajador::findIdentity($post);
-		if(!$trabajador)
+		$model=$this->modelClass::findOne(['rut'=>$request->post('rut')]);
+		if($model!==null)
 		{
-			$trabajador=new Trabajador();
+			$model->Attributes=$post;
+			$model->save();
+			return $model;
 		}
-		$trabajador->Attributes=$post;
-		$trabajador->save();
+		$model=$this->modelClass::findOne($post);
+		if($model===null)
+		{
+			$model=new $this->modelClass();
+			$model->attributes=$post;
+			$model->save();
+		}
 		return $model;
 	}
 

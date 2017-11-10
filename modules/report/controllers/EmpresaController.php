@@ -3,6 +3,7 @@
 namespace app\modules\report\controllers;
 
 use yii\web\Controller;
+
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\QueryParamAuth;
@@ -12,16 +13,26 @@ class EmpresaController extends Controller
     public function behaviors()
     {
         return \yii\helpers\ArrayHelper::merge(parent::behaviors(),[
-            'authenticator'=>[        
-                'class' => CompositeAuth::className(),
-                'authMethods' => [
-                    HttpBearerAuth::className(),
-                    QueryParamAuth::className(),
-                ],
+            'authenticator'=>[
+    	        'class' => CompositeAuth::className(),
+		        'authMethods' => [
+		            HttpBearerAuth::className(),
+		            QueryParamAuth::className(),
+		        ]
+                // 'class' => \yii\filters\auth\HttpBearerAuth::className() 
             ],
             'authorization'=>[
-                'class' => \app\components\Authorization::className(),
-            ],
+                'class' => \app\components\Authorization::className()
+            ],        
+         //    'corsFilter'  => [
+	        //     'class' => \yii\filters\Cors::className(),
+	        //     'cors'  => [
+	        //         'Origin'                           => ['*'],
+	        //         'Access-Control-Request-Method'    => ['GET'],
+	        //         'Access-Control-Allow-Credentials' => true,
+	        //         'Access-Control-Max-Age'           => 3600,// Cache (seconds)
+	        //     ],
+	        // ],
         ]);
     }
 
@@ -64,6 +75,8 @@ class EmpresaController extends Controller
                     break;
                 case 'CERT_3':
                     $this->cert3($ficha);
+                    break;
+                break;
                 case 'EXTINTOR_1':
                     $this->extintor1($ficha);
                     break;
@@ -78,26 +91,32 @@ class EmpresaController extends Controller
     public function extintor1($ficha)
     {
         /*
-         * Evaluación 57 | 18717 
+         * Evaluación 57 | 18891 
          */
         
-        $mpdf = new \mPDF('utf-8', array(148,297),0,'',6.8,6.5);
-        $mpdf->debug = true; 
+        // $mpdf = new \mPDF('utf-8', array(148,297),0,'',6.8,6.5);
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'=>'utf-8',
+            'format'=>[148,297],
+            'margin_left'=>6.8,
+            'margin_right'=>6.5
+        ]);
+        $mpdf->debug = false;
         $mpdf->SetTitle('Reporte VR Firex '.$ficha->primaryKey);
         $mpdf->WriteHTML($this->renderPartial('extintor/reporte1',array('ficha'=>$ficha),true));
-        $mpdf->WriteText(500,500,"hola");
-        // $mpdf->Image('img/reporte/extintor/fondo_01.jpg', 0, 0, 144, 297, 'jpg', '', true, false);
         $mpdf->Output('FICHA Nro. '.$ficha->primaryKey.'.pdf','I');
     }
 
     private function normal($ficha)
     {
         /*
-         * Evaluación NORMAL 
+         * Evaluación NORMAL | 16400
          */       
-        $mpdf = new \mPDF('utf-8','Letter');
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'=>'utf-8',
+            'format'=>'Letter'
+        ]);
         $mpdf->title="Ficha de evaluación";
-        $mpdf->charset_in = 'utf-8';
         // $mpdf->debug = true; 
         $mpdf->setFooter('Página {PAGENO}');
         $mpdf->WriteHTML(file_get_contents( \Yii::getAlias('@webroot').'/css/bootstrap.cerulean.min.css'),1);
@@ -111,14 +130,12 @@ class EmpresaController extends Controller
     private function cert1($ficha)
     {
         /*
-         * Evaluación 50  
+         * Evaluación 50  | 17537
          */
         // $style =  file_get_contents( \Yii::getAlias('@webroot').'/css/ceim.css');
         // $mpdf->WriteHTML($style,1);
         
-        $mpdf = new \mPDF();
-        // $mpdf->debug = true; 
-        $mpdf->charset_in = 'utf-8';
+        $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8']);
         $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$ficha->primaryKey);
         $mpdf->WriteHTML($this->renderPartial('cert/cert1',array('ficha'=>$ficha),true));
         $mpdf->Output('FICHA Nro. '.$ficha->primaryKey.'.pdf','I');
@@ -127,18 +144,15 @@ class EmpresaController extends Controller
     private function cert2($ficha)
     {   
         /*
-         * Evaluación 54
+         * Evaluación 54 | 18659
          */
         if(!$ficha->getParams()->exists()){
             $ficha->resolve();
-        }
-        
+        }        
         if($ficha->calificacion===null){
                 throw new \yii\web\HttpException(404, 'Esta evaluación, no tiene reporte o no a finalizado el proceso.');
         }
-        $mpdf = new \mPDF();
-        // $mpdf->debug = true;
-        $mpdf->charset_in = 'utf-8';
+        $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8']);
         $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$ficha->primaryKey);
         $mpdf->WriteHTML($this->renderPartial('cert/cert2',array('ficha'=>$ficha),true));
         $mpdf->Output('FICHA Nro. '.$ficha->primaryKey.'.pdf','I');
@@ -148,15 +162,13 @@ class EmpresaController extends Controller
     private function cert3($ficha)
     {
         /*
-         * Evaluación 53
+         * Evaluación 53 | 18586
          */
         if(!$ficha->getParams()->exists())
         {
             $ficha->resolve();
         }     
-        $mpdf = new \mPDF();
-        // $mpdf->debug = true;
-        $mpdf->charset_in = 'utf-8';
+        $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8']);
         $mpdf->SetTitle('INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD '.$ficha->primaryKey);
         $mpdf->WriteHTML($this->renderPartial('cert/cert3',array('ficha'=>$ficha),true));
         $mpdf->Output('FICHA Nro. '.$ficha->primaryKey.'.pdf','I');

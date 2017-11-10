@@ -48,8 +48,8 @@ class RvFicha extends \yii\db\ActiveRecord
 
     public function fields()
     {
-    	return [
-    	    'fic_id',
+        return [
+            'fic_id',
             'eva_id',
             'trab_id',
             'con_id',
@@ -57,11 +57,11 @@ class RvFicha extends \yii\db\ActiveRecord
             'disp_id',
             'calificacion'=>function()
             {
-            	return floatval($this->calificacion);
+                return floatval($this->calificacion);
             },
             'pais_id',
             'creado'
-    	];
+        ];
     }
 
     public function extraFields()
@@ -192,17 +192,18 @@ class RvFicha extends \yii\db\ActiveRecord
 
     public function getReacreditacion()
     {
-        $query = new \yii\db\Query;
-        $query->select('min(creado) as creado')
-            ->from('rv_ficha')
-            ->where(['trab_id' =>  $this->trab_id, 'eva_id' => $this->eva_id ]);        
-        $command = $query->createCommand();
-        $rows = $command->queryAll();
-        if($rows[0]['creado'] == $this->creado){
-            return false;
-        }else{
-            return true;
-        }      
+        return static::find()->where($this->getAttributes(['eva_id','trab_id']))->min('fic_id')!=$this->primaryKey;
+        // $query = new \yii\db\Query;
+        // $query->select('min(creado) as creado')
+        //     ->from('rv_ficha')
+        //     ->where(['trab_id' =>  $this->trab_id, 'eva_id' => $this->eva_id ]);        
+        // $command = $query->createCommand();
+        // $rows = $command->queryAll();
+        // if($rows[0]['creado'] == $this->creado){
+        //     return false;
+        // }else{
+        //     return true;
+        // }      
     }
 
     /*

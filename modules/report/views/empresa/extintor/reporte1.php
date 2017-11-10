@@ -14,7 +14,7 @@
 <head>
 <style type="text/css">p{color:#fff;font-family:Roboto,sans-serif;font-size:x-large}.tab{width:25%;float:left;text-align:center}</style>
 </head>
-<body style="background-image: url('img/reporte/extintor/escena_01_low.jpg');background-repeat: no-repeat;">
+<body style="background-image: url('/images/report/extintor/escena_01_low.jpg');background-repeat: no-repeat;">
 	<div style="padding-top: 280px;padding-left: 170px;">
 		<p><?=$trabajador->getNombreCompleto(false) ?><br><small><?=$trabajador->rut ?></small></p>
 	</div>

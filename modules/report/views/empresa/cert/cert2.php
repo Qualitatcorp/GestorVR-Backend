@@ -1,211 +1,99 @@
-<style type="text/css">
-.aprobado{background-image: url('<?=\Yii::$app->params['BasePathImage']?>aprobado.png');}
-.noaprobado{background-image: url('<?=\Yii::$app->params['BasePathImage']?>noaprobado.png');}
-</style>
 <?php 
-// variables 
-	$aprobado = '';
-	$noaprobado = '';
-	$textInfo1 = '';
-	$nota_test = 30;
-	$logo =  \Yii::$app->params['BasePathImage'].'logo.png';
-	function upper($string){return strtoupper($string);}
-	// persepcion de riesgo
-	$bp ="El trabajador presenta una <strong>Baja</strong> Percepción del riesgo";
-	$ap ="El trabajador presenta una <strong>Alta</strong> Percepción del Riesgo";
-	//concimientos de seguridad
-	$be ="El trabajador presenta un <strong>Bajo</strong> nivel de Conocimiento  en Estándares ENAP";
-	$ae ="El trabajador presenta un nivel <strong>Alto</strong> de Conocimientos en Estándares ENAP ";
-	//perfil psioclogico
-	$bps ="El trabajador presenta un perfil psicológico <strong>Adecuado</strong> de conducta asociada al riego";  //el trabajador presenta
-	$aps ="El trabajador presenta un perfil <strong> No Adecuado </strong> de conducta asociada al riego";
-
-	if(!$ficha->getParams()->exists()){
-		$ficha->timsEva1();
-	}
+	/*
+	 * Configruacion de Variables Globales
+	 */
+	setlocale(LC_ALL, 'es_CL.utf8');
+	/*
+	 * Preprar Variables
+	 */
+	$trabajador=$ficha->trabajador;
+	$empresa=$ficha->empresa;
 	$params=$ficha->params;
- 	if($params->data['riesgo']['nota'] <>null){
- 		$notaInfo3 =number_format( $params->data['riesgo']['nota']*100);
- 	}else{
- 		$notaInfo3 = null; 
- 	}
-	$trabajador = $ficha->trabajador;
-	$nombreCompleto = $trabajador->nombre . ' ' . $trabajador->paterno. ' ' . $trabajador->materno;
-	$evaluacion = $ficha->evaluacion;
-	$ceim = $ficha->ceim;
-	$calificacion = number_format( $params->data['nota']*100);
-	 
-	// semaforo
-
-	$notaInfo1 =   number_format($params->data['percepcion']['nota']*100); //tomar nota de controlador
-	// $notaInfo1 = 89;
-	if($params->data['percepcion']['nota'] > 0.69){
-		$textInfo1 = $ap;
-	}else{
-		$textInfo1 = $bp;
-	}
-	//$informe 2
-	 
-	$notaInfo2 = number_format($params->data['conocimiento']['nota']*100);// tomar prenota de controlador;
-	if($params->data['conocimiento']['nota'] > 0.69){
-		$textInfo2 = $ae;
-	}else{
-		$textInfo2 = $be;
-	}
-	//$informe 3
- 	
-	if($params->data['nota'] > 0.69){
-		$aprobado  = $calificacion . '%';
-	}else{
-		$noaprobado = $calificacion . '%';
-	}
-
-	//$notaInfo3 = $nota_test; //tomar nota de controlador psicológico
-
-	$textInfo3 = '';
-
-	if($notaInfo3 === null){
-		$textInfo3 = "la nota psicologica no se encuentra disponible en estos momentos";
-	}else if($params->data['riesgo']['nota'] > 69){
-		$textInfo3 = $aps;
-	}
-	else{
-		$textInfo3 = $bps;
-	}
-	 
-//fecha
-setlocale(LC_TIME, "C");
-$date = new DateTime($ficha->creado);
-$mes = $date->format('F');
-$dia = $date->format('d');
-$anio = $date->format('Y');
-switch ($mes) {
-	case 'January':
-	    $mes="Enero";
-		break;
-	case 'February':
-	   $mes="Febrero";
-		break;
-	case 'March':
-	   $mes="Marzo";
-		break;
-	case 'April':
-	    $mes="Abril";
-		break;
-	case 'May':
-	    $mes="Mayo";
-		break;
-	case 'June':
-	    $mes="Junio";
-		break;
-	case 'July':
-	    $mes="Julio";
-	break;	
-	case 'August':
-	    $mes="Agosto";
-		break;	
-	case 'September':
-	    $mes="Septiembre";
-	break;	
-	case 'October':
-	    $mes="Octubre";
-	break;
-	case 'November':
-	    $mes="Noviembre";
-	break;
-	case 'December':
-	    $mes="Diciembre";
-	break;
-	
-	default:
-		# code...
-		break;
-};
- 
-?>
+	$data=$params->data;
+ ?>
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+.container{font-family:arial;font-size:16;letter-spacing:1px}.aprobado{background-image:url(<?=\Yii::$app->params['BasePathImage'] ?>aprobado.png)}.noaprobado{background-image:url(<?=\Yii::$app->params['BasePathImage'] ?>noaprobado.png)}.floatL{float:left}.porcentaje{text-align:center;padding:15px;width:50px}.resultado{background-repeat:no-repeat;width:110px;height:48px}.descripcion{width:200px;padding-top:15dpi;padding-left:120px}
+</style>
+</head>
 <body>
-<img src="<?=$logo ?>" style="margin-left: 220; width: 200px">
+	<img src="<?=\Yii::$app->params['BasePathImage'].'logo.png'?>" style="margin-left: 220; width: 200px">
 	<div class="container">
-		<h4 class = "margin-top-30 underline margin-left-20 "  > INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD</h4>
-		<div  >
-			NOMBRE: <?=upper($nombreCompleto) ?> 
-			<br>
-			RUT: <?= $trabajador->rut ?>
-			<br>
-			EMPRESA: <?= upper($trabajador->gerencia) ?>
-			<br>
-			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "ACREDITACIÓN"; ?> : <?= $dia .' '.$mes . ' '. $anio; ?>
-			 
-
-
-		</div> 
-		<!-- aprobado -->
-		<div  class = "margin-top-15">
-			<div class="resultado aprobado floatL">
-				<div class = "porcentaje ">
-					<?=$aprobado?>
+		<h4 align="center" style="text-decoration: underline;">
+			INFORME DE RESULTADOS SISTEMA DE EVALUACIÓN EN SEGURIDAD
+		</h4>
+		<div>
+			NOMBRE: <?=mb_strtoupper ($trabajador->getNombreCompleto(false)) ?><br>
+			RUT: <?=$trabajador->rut ?><br>
+			EMPRESA: <?=$trabajador->gerencia ?><br>
+			FECHA <?=($ficha->reacreditacion) ? "REACREDITACION" : "ACREDITACIÓN"; ?>:<?=mb_strtoupper (strftime("%e de %B del %Y",strtotime($ficha->creado))) ?><br>
+		</div>
+		<div  style="margin-top: 15px" >
+			<div>
+				<div class="resultado aprobado floatL">
+					<div class = "porcentaje ">
+						<?php if ($data['nota']>=0.70): ?>
+							<?=number_format($data['nota']*100) ?>%
+						<?php endif ?>
+					</div>
 				</div>
+				<div class = "descripcion">APROBADO</div>
 			</div>
-			<div class = "descripcion">
-				APROBADO
+			<div>
+				<div class="resultado noaprobado floatL">
+					<div class = "porcentaje ">
+						<?php if ($data['nota']<0.70): ?>
+							<?=number_format($data['nota']*100) ?>%
+						<?php endif ?>
+					</div>
+				</div>
+				<div class = "descripcion">NO APROBADO</div>
+			</div>
+		</div>
+		<div style="margin-top: 15px">
+			<p><strong>1.- Informe de Percepción del Riesgo Trabajador</strong></p>
+			<div style="margin-left: 33px;">
+				<div class="floatL" style="width: 20%";>
+					<p><strong>NOTA <?=number_format($data['dec_nota']*100) ?>%</strong></p>
+				</div>
+				<div style="width: 50%;text-justify: inter-word;">
+					<p>El trabajador presenta una <strong><?= ($data['dec_nota'] >= 0.70)?"Alta":"Baja"?></strong> Percepción del Riesgo</p>
+				</div>
+				<p>Detalle de Informe comparativo sobre el óptimo de:</p>
+				<ul style="list-style-type: disc;">
+					<li>Número de detección de errores del ambiente: <?=$data['PRINCIPAL']['acierto']." (".$data['PRINCIPAL']['total']?>)</li>
+					<li>Número de visualización de errores externos al evento: <?=$data['SECUNDARIO']['acierto']." (".$data['SECUNDARIO']['total']?>)</li>
+				</ul>
 			</div>
 		</div>
 		<div>
-			<div class="resultado noaprobado floatL">
-				<div class = "porcentaje ">
-					<?= $noaprobado ?>
+			<p><strong>2.- Informe de Conocimiento Estándares <?=$empresa->nombre?></strong></p>
+			<div style="margin-left: 33px;">
+				<div class="floatL" style="width: 20%";>
+					<p><strong>NOTA <?=number_format($data['pre_nota']*100) ?>%</strong></p>
 				</div>
-			</div>
-			<div class = "descripcion">
-				NO APROBADO
-			</div>
-		</div>
-		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  1.- Informe Percepción del Riesgo Trabajado </div>
-			<br>
-			<div class="bold floatL Width20">
-				NOTA: <?= $notaInfo1 ?>  %
-			</div>
-			<div class=" Width40 ">
-				<?= $textInfo1; ?> 
-			</div>
-			<div class="margin-top-15">
-				Detalle de Informe comparativo sobre el óptimo de:
-				<br>
-				<div class="margin-left-30">   Número de detección de errores del ambiente: <?=$params->data['percepcion']['pri']['correcto']?>
-					(<?=$params->data['percepcion']['pri']['total']?>)</div>
-				<div class="margin-left-30">   Número de visualización de errores externos al evento:
-				 <?=$params->data['percepcion']['sec']['correcto']?> 
-				 (<?=$params->data['percepcion']['sec']['total']?>) </div>
+				<div style="width: 50%;text-justify: inter-word;">
+					<p>El trabajador presenta un <strong><?=($data['pre_nota'] >= 0.70)?"Alto":"Bajo" ?></strong> nivel  de Conocimientos en Estándares <?=$empresa->nombre ?></p>
+				</div>
+				<p>Detalle de Informe comparativo sobre el óptimo de:</p>
+				<ul style="list-style-type: disc;">
+					<li>Respuestas Correctas de Conocimiento: <?=$data['PREGUNTA']['acierto']." (".$data['PREGUNTA']['total']?>)</li>
+				</ul>
 			</div>
 		</div>
-		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  2.- Informe Conocimiento Estándares ENAP   </div>
-			<br>
-			<div class="bold floatL Width20">
-				NOTA: <?= $notaInfo2 ?> %
-			</div>
-			<div class="Width40 ">
-				<?= $textInfo2 ?> 
-			</div>
-			<div class="margin-top-15">
-				Detalle de Informe comparativo sobre el óptimo de:
-				<br>
-				<div class="margin-left-30"> 	Respuestas Correctas Conocimiento:  
-					<?=$params->data['conocimiento']['correcto']?> 
-					(<?=$params->data['conocimiento']['total']?>)</div>
-			</div>
-		</div>
-		<div class = "margin-top-15 padding-top-5">
-			<div class="bold">  3.- Informe Adecuación al Perfil   </div>
-			<br>
-			<div class="bold floatL Width20">
-				NOTA: <?= $notaInfo3 ?> %
-			</div>
-			<div class="Width40 ">
-				  <?=$textInfo3  ?>  
+		<div>
+			<p><strong>3.- Informe Adecuación al Perfil</strong></p>
+			<div style="margin-left: 33px;">
+				<div class="floatL" style="width: 20%";>
+					<p><strong>NOTA <?=number_format($data['psi_nota']*100) ?>%</strong></p>
+				</div>
+				<div style="width: 60%;text-justify: inter-word;">
+					<p>El trabajador presenta un perfil <strong><?=($data['psi_nota'] >= 0.70)?"Adecuado":"No Adecuado" ?></strong>  de conducta asociada al riego.</p>
+				</div>
 			</div>
 		</div>
 	</div>
-
 </body>
+</html>
